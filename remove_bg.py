@@ -224,7 +224,7 @@ def process_image(image_path):
                 "-fuzz", f"{fuzz}%",
                 "-transparent", rgb_str,
                 "-channel", "A",
-                "-morphology", "Erode", "Disk:1",
+                "-morphology", "Erode", "Disk:2",
                 "-blur", "0x1",
                 "+channel",
                 "-trim", "+repage",
