@@ -110,7 +110,7 @@ def analyze_crops(crops, bg_color):
             ratio = curr_holes / max(prev_holes, 1)
             diff = curr_holes - prev_holes
             
-            is_surge = (ratio > 1.1 and diff >= 5)
+            is_surge = (ratio > 1.5 and diff >= 20)
             
             if is_surge:
                 print(f"    Hole count surge at fuzz {curr[0]}% ({prev_holes} -> {curr_holes})")
