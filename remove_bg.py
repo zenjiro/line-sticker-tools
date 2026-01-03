@@ -87,14 +87,16 @@ def analyze_crops(crops, bg_color):
 
     # Selection Heuristic:
     # Find the highest fuzz where hole count is stable.
-    # But if the "stable" choice still has a halo (purple edge), try to push further.
+    # But if the hole count increases significantly, stop.
     
     # Sort all crops by fuzz
     all_sorted = sorted(valid_crops, key=lambda x: x[0])
     
     selected = all_sorted[0]
+    baseline_holes = all_sorted[0][5]
+    min_holes = baseline_holes
     
-    print(f"    Baseline holes at fuzz {all_sorted[0][0]}%: {all_sorted[0][5]}")
+    print(f"    Baseline holes at fuzz {all_sorted[0][0]}%: {baseline_holes}")
     
     for i in range(1, len(all_sorted)):
         curr = all_sorted[i]
@@ -103,40 +105,38 @@ def analyze_crops(crops, bg_color):
         curr_holes = curr[5]
         prev_holes = prev[5]
         
-        # Check if previous had halo
+        # Track minimum holes seen so far
+        min_holes = min(min_holes, curr_holes)
         
-        # If hole count increases significantly
-        if curr_holes > prev_holes:
-            ratio = curr_holes / max(prev_holes, 1)
-            diff = curr_holes - prev_holes
-            
-            # Ratio relative to baseline (first crop at 10%)
-            baseline_holes = all_sorted[0][5]
-            ratio_vs_baseline = curr_holes / max(baseline_holes, 1)
-            
-            # Existing logic: Large jump between consecutive steps
-            is_surge_step = (ratio > 1.8 and diff >= 50)
-            
-            # New logic: Significant accumulation compared to baseline
-            # Trigger if holes increased by >40% AND absolute increase is >= 10
-            is_surge_baseline = (ratio_vs_baseline > 1.4 and (curr_holes - baseline_holes) >= 10)
-            
-            is_surge = is_surge_step or is_surge_baseline
-            
-            if is_surge:
-                print(f"    Hole count surge at fuzz {curr[0]}% ({prev_holes} -> {curr_holes})")
-                if is_surge_step:
-                    print(f"      -> Step Surge (Ratio: {ratio:.2f}, Diff: {diff})")
-                if is_surge_baseline:
-                    print(f"      -> Baseline Surge (Ratio vs Baseline: {ratio_vs_baseline:.2f}, Total Diff: {curr_holes - baseline_holes})")
-                print(f"      -> Stopping.")
-                selected = prev
-                break
-            else:
-                 selected = curr
+        # 1. Step Surge: Large jump between consecutive steps
+        ratio_step = curr_holes / max(prev_holes, 1)
+        diff_step = curr_holes - prev_holes
+        is_surge_step = (ratio_step > 1.8 and diff_step >= 50)
+        
+        # 2. Baseline Surge: Significant accumulation vs baseline (Good for f.png)
+        ratio_vs_baseline = curr_holes / max(baseline_holes, 1)
+        is_surge_baseline = (ratio_vs_baseline > 1.4 and (curr_holes - baseline_holes) >= 10)
+        
+        # 3. Minimum-based Surge: Sensitive detection at higher fuzz (Good for h, k, l)
+        ratio_vs_min = curr_holes / max(min_holes, 1)
+        diff_vs_min = curr_holes - min_holes
+        is_surge_min = (curr[0] >= 30 and ratio_vs_min > 1.05 and diff_vs_min >= 5)
+        
+        is_surge = is_surge_step or is_surge_baseline or is_surge_min
+        
+        if is_surge:
+            print(f"    Hole count surge at fuzz {curr[0]}% ({prev_holes} -> {curr_holes})")
+            if is_surge_step:
+                print(f"      -> Step Surge (Ratio: {ratio_step:.2f}, Diff: {diff_step})")
+            if is_surge_baseline:
+                print(f"      -> Baseline Surge (Ratio vs Baseline: {ratio_vs_baseline:.2f}, Total Diff: {curr_holes - baseline_holes})")
+            if is_surge_min:
+                print(f"      -> Min-based Surge (Ratio vs Min: {ratio_vs_min:.2f}, Total Diff: {diff_vs_min})")
+            print(f"      -> Stopping.")
+            selected = prev
+            break
         else:
-            # Hole count stable or decreasing (merging), this fuzz is safe
-            selected = curr
+             selected = curr
     
     print(f"    Final selection: Fuzz {selected[0]}%") 
     
