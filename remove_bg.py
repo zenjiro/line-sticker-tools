@@ -72,50 +72,7 @@ def get_average_border_color(image_path, border_width=10):
         print(f"Error analyzing image border: {e}", file=sys.stderr)
         return None
 
-def calculate_halo_ratio(image_path, bg_color, threshold=60):
-    """
-    Calculates the ratio of border pixels that are close to the background color.
-    High ratio means background color is still present at the edges (halo).
-    """
-    try:
-        with Image.open(image_path) as img:
-            img = img.convert("RGBA")
-            alpha = np.array(img.split()[-1])
-            rgb = np.array(img.convert("RGB"))
             
-            # Find contour (pixels that are opaque but touch transparent)
-            # Dilate opacity mask and subtract original opacity mask to get boundary of transparency
-            # Or erode opacity mask and subtract to get inner boundary
-            
-            # Mask of opaque pixels
-            opaque_mask = alpha > 0
-            
-            # Erode to find interior pixels
-            eroded_mask = ndimage.binary_erosion(opaque_mask, iterations=1)
-            
-            # Boundary pixels are opaque but were removed by erosion (inner edge)
-            boundary_mask = opaque_mask & ~eroded_mask
-            
-            if not np.any(boundary_mask):
-                return 0.0
-            
-            # Get colors of boundary pixels
-            boundary_colors = rgb[boundary_mask]
-            
-            # Calculate distance to background color
-            # Simple Euclidean distance in RGB
-            bg_arr = np.array(bg_color)
-            distances = np.sqrt(np.sum((boundary_colors - bg_arr) ** 2, axis=1))
-            
-            # Count pixels close to background color
-            halo_pixels = np.sum(distances < threshold)
-            total_boundary = np.sum(boundary_mask)
-            
-            return halo_pixels / total_boundary
-
-    except Exception as e:
-        print(f"Error calculating halo: {e}", file=sys.stderr)
-        return 0.0
 
 def analyze_crops(crops, bg_color):
     """
@@ -147,36 +104,20 @@ def analyze_crops(crops, bg_color):
         prev_holes = prev[5]
         
         # Check if previous had halo
-        prev_halo_ratio = calculate_halo_ratio(prev[3], bg_color)
         
         # If hole count increases significantly
         if curr_holes > prev_holes:
             ratio = curr_holes / max(prev_holes, 1)
             diff = curr_holes - prev_holes
             
-            is_surge = (ratio > 1.2 and diff >= 20)
+            is_surge = (ratio > 1.1 and diff >= 5)
             
             if is_surge:
-                # Hole surge detected. Normally we stop here.
-                # BUT, if the previous image still has a strong halo, maybe this surge is worth it?
-                # Or maybe the surge is just noise revealing more halo?
+                print(f"    Hole count surge at fuzz {curr[0]}% ({prev_holes} -> {curr_holes})")
+                print(f"      -> Stopping due to surge (Ratio: {ratio:.2f}, Diff: {diff}).")
+                selected = prev
+                break
                 
-                print(f"    Hole count surge at fuzz {curr[0]}% ({prev_holes} -> {curr_holes}), Prev Halo Ratio: {prev_halo_ratio:.2%}")
-                
-                # Catastrophic surge check
-                # If hole count increases by a massive factor (e.g. 5x) or a huge number, we MUST stop.
-                if ratio > 5.0 or (curr_holes - prev_holes) > 200:
-                    print(f"      -> Stopping due to CATASTROPHIC surge (Ratio: {ratio:.1f}, Diff: {curr_holes - prev_holes}).")
-                    selected = prev
-                    break
-                
-                if prev_halo_ratio > 0.01: # If more than 1% of border is still background color
-                    print(f"      -> Ignoring surge because previous image has excessive halo.")
-                    selected = curr
-                else:
-                    print(f"      -> Stopping because halo is acceptable ({prev_halo_ratio:.2%}) or surge is too risky.")
-                    selected = prev
-                    break
             else:
                  selected = curr
         else:
