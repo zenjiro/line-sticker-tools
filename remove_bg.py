@@ -110,14 +110,28 @@ def analyze_crops(crops, bg_color):
             ratio = curr_holes / max(prev_holes, 1)
             diff = curr_holes - prev_holes
             
-            is_surge = (ratio > 1.8 and diff >= 50)
+            # Ratio relative to baseline (first crop at 10%)
+            baseline_holes = all_sorted[0][5]
+            ratio_vs_baseline = curr_holes / max(baseline_holes, 1)
+            
+            # Existing logic: Large jump between consecutive steps
+            is_surge_step = (ratio > 1.8 and diff >= 50)
+            
+            # New logic: Significant accumulation compared to baseline
+            # Trigger if holes increased by >40% AND absolute increase is >= 10
+            is_surge_baseline = (ratio_vs_baseline > 1.4 and (curr_holes - baseline_holes) >= 10)
+            
+            is_surge = is_surge_step or is_surge_baseline
             
             if is_surge:
                 print(f"    Hole count surge at fuzz {curr[0]}% ({prev_holes} -> {curr_holes})")
-                print(f"      -> Stopping due to surge (Ratio: {ratio:.2f}, Diff: {diff}).")
+                if is_surge_step:
+                    print(f"      -> Step Surge (Ratio: {ratio:.2f}, Diff: {diff})")
+                if is_surge_baseline:
+                    print(f"      -> Baseline Surge (Ratio vs Baseline: {ratio_vs_baseline:.2f}, Total Diff: {curr_holes - baseline_holes})")
+                print(f"      -> Stopping.")
                 selected = prev
                 break
-                
             else:
                  selected = curr
         else:
