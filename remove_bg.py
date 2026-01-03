@@ -222,7 +222,8 @@ def process_image(image_path):
     finally:
         # Cleanup temp files
         if temp_dir.exists():
-            print(f"  Temp files kept in: {temp_dir}")
+            shutil.rmtree(temp_dir)
+            print(f"  Cleaned up temp files in: {temp_dir}")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
