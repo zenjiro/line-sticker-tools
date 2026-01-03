@@ -146,7 +146,7 @@ def process_image(image_path):
     print(f"  Detected Background Color: {rgb_str}")
 
     # 2. Try multiple fuzz values
-    fuzz_values = [5, 10, 15, 20, 25, 30, 35, 40] # Expanded range
+    fuzz_values = [10, 15, 20, 25, 30, 35, 40, 45, 50] # Expanded range
     results = []
     
     temp_dir = Path(f"temp_processing_{image_path.stem}")
