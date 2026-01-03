@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#     "Pillow",
+#     "Pillow>=12.1.0",
 #     "scipy",
 #     "numpy",
 # ]
@@ -224,7 +224,8 @@ def process_image(image_path):
                 "-fuzz", f"{fuzz}%",
                 "-transparent", rgb_str,
                 "-channel", "A",
-                "-morphology", "Erode", "Disk:2",
+                "-morphology", "Erode", "Disk:1",
+                "-blur", "0x1",
                 "+channel",
                 "-trim", "+repage",
                 str(temp_out)
