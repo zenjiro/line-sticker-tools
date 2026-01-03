@@ -237,7 +237,7 @@ def process_image(image_path):
                 with Image.open(temp_out) as img:
                     img_rgba = img.convert("RGBA")
                     w, h = img_rgba.size
-                    opaque_count = sum(1 for p in img_rgba.getdata() if p[3] > 0)
+                    opaque_count = sum(1 for p in img_rgba.get_flattened_data() if p[3] > 0)
                 
                 holes = count_holes(temp_out)
                     
