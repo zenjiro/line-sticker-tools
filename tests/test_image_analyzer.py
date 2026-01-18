@@ -5,10 +5,7 @@ import tempfile
 from pathlib import Path
 import sys
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from image_analyzer import (
+from src.image_analyzer import (
     get_average_border_color,
     count_holes,
     get_image_dimensions,

@@ -147,6 +147,12 @@ def get_image_dimensions(image_path: str) -> Optional[Tuple[int, int]]:
         return None
 
 
+# Backward compatibility wrapper
+def get_border_color(image_path):
+    """Backward compatibility wrapper for get_average_border_color."""
+    return get_average_border_color(image_path, border_width=10)
+
+
 def count_opaque_pixels(image_path: str) -> int:
     """Count opaque (non-transparent) pixels in an image.
     

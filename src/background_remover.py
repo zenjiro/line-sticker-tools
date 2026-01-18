@@ -240,7 +240,16 @@ def analyze_crops(crops: List[CropResult]) -> Optional[CropResult]:
     return selected
 
 
-def remove_background(image_path: Path, bg_color: Tuple[int, int, int], 
+# Backward compatibility wrapper  
+def remove_background(image_path, bg_color):
+    """Backward compatibility wrapper for the enhanced remove_background function."""
+    from pathlib import Path
+    if isinstance(image_path, str):
+        image_path = Path(image_path)
+    return remove_background_advanced(image_path, bg_color, fuzz_values=[25])  # Use fixed 25% fuzz like original
+
+
+def remove_background_advanced(image_path: Path, bg_color: Tuple[int, int, int], 
                      fuzz_values: Optional[List[int]] = None) -> bool:
     """Remove background from an image using multiple fuzz values with intelligent selection.
     

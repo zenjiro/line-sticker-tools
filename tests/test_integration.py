@@ -9,9 +9,6 @@ import sys
 from PIL import Image
 import numpy as np
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
 from tests.fixtures import create_test_image, create_border_test_image
 
 

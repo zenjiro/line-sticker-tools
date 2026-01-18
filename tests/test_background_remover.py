@@ -6,10 +6,7 @@ from pathlib import Path
 import sys
 from unittest.mock import patch, MagicMock
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from background_remover import (
+from src.background_remover import (
     CropResult,
     analyze_crops,
     process_fuzz_value,
