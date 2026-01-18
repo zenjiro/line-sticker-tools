@@ -79,10 +79,10 @@ class TestAnalyzeCrops:
 class TestBackgroundRemover:
     """Test background removal functions."""
     
-    @patch('background_remover.subprocess.run')
-    @patch('background_remover.image_analyzer.get_image_dimensions')
-    @patch('background_remover.image_analyzer.count_opaque_pixels')
-    @patch('background_remover.image_analyzer.count_holes')
+    @patch('src.background_remover.subprocess.run')
+    @patch('src.background_remover.image_analyzer.get_image_dimensions')
+    @patch('src.background_remover.image_analyzer.count_opaque_pixels')
+    @patch('src.background_remover.image_analyzer.count_holes')
     def test_process_fuzz_value_success(self, mock_holes, mock_opaque, 
                                        mock_dimensions, mock_subprocess):
         """Test successful fuzz value processing."""
@@ -113,7 +113,7 @@ class TestBackgroundRemover:
             import shutil
             shutil.rmtree(temp_dir)
     
-    @patch('background_remover.subprocess.run')
+    @patch('src.background_remover.subprocess.run')
     def test_process_fuzz_value_subprocess_error(self, mock_subprocess):
         """Test fuzz processing with subprocess error."""
         from subprocess import CalledProcessError
@@ -133,8 +133,8 @@ class TestBackgroundRemover:
             import shutil
             shutil.rmtree(temp_dir)
     
-    @patch('background_remover.process_fuzz_value')
-    @patch('background_remover.analyze_crops')
+    @patch('src.background_remover.process_fuzz_value')
+    @patch('src.background_remover.analyze_crops')
     def test_remove_background_success(self, mock_analyze, mock_process):
         """Test successful background removal."""
         # Setup mocks
@@ -152,7 +152,7 @@ class TestBackgroundRemover:
         test_result.filepath = temp_processed
         
         try:
-            success = remove_background(test_image, (255, 255, 255), [25])
+            success = remove_background(test_image, (255, 255, 255))
             assert success is True
             
             # Check output file was created

@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import List, Tuple, Optional
 import logging
 
-import image_analyzer
+from . import image_analyzer
 
 logger = logging.getLogger(__name__)
 

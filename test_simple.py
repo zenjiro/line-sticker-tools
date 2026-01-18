@@ -4,8 +4,8 @@ import tempfile
 import os
 from pathlib import Path
 from PIL import Image
-import image_utils
-import background_utils
+from src import image_analyzer
+from src import background_remover
 
 
 def create_test_image(width=100, height=100, color=(255, 255, 255)):
@@ -21,7 +21,7 @@ def test_get_border_color():
     """Test border color detection."""
     test_file = create_test_image(color=(255, 0, 0))  # Red image
     try:
-        color = image_utils.get_border_color(test_file)
+        color = image_analyzer.get_average_border_color(test_file)
         assert color is not None
         assert color[0] > 200  # Should detect red
     finally:
@@ -42,7 +42,7 @@ def test_count_holes():
     temp_file.close()
     
     try:
-        holes = image_utils.count_holes(temp_file.name)
+        holes = image_analyzer.count_holes(temp_file.name)
         assert holes >= 1  # Should find at least one hole
     finally:
         os.unlink(temp_file.name)
@@ -52,7 +52,7 @@ def test_remove_background():
     """Test background removal."""
     test_file = create_test_image()
     try:
-        success = background_utils.remove_background(Path(test_file), (255, 255, 255))
+        success = background_remover.remove_background(Path(test_file), (255, 255, 255))
         # Should return True or False, not crash
         assert isinstance(success, bool)
     finally:
@@ -65,10 +65,10 @@ def test_remove_background():
 
 def test_invalid_file():
     """Test handling of invalid files."""
-    color = image_utils.get_border_color("nonexistent.png")
+    color = image_analyzer.get_average_border_color("nonexistent.png")
     assert color is None
     
-    holes = image_utils.count_holes("nonexistent.png")
+    holes = image_analyzer.count_holes("nonexistent.png")
     assert holes == 0
 
 

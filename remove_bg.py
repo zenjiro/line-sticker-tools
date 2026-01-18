@@ -2,7 +2,7 @@
 
 import sys
 from pathlib import Path
-from src.image_analyzer import get_border_color
+from src.image_analyzer import get_average_border_color
 from src.background_remover import remove_background
 
 
@@ -25,7 +25,7 @@ def main():
         print(f"Processing {image_file}...")
         
         # Get background color
-        bg_color = get_border_color(str(image_path))
+        bg_color = get_average_border_color(str(image_path))
         if not bg_color:
             print(f"Could not detect background color for {image_file}", file=sys.stderr)
             any_failed = True
