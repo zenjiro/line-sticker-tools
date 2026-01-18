@@ -169,8 +169,6 @@ main() {
         else
             failed_files+=("$file")
         fi
-        
-        echo  # Add blank line between files
     done
     
     # Summary
