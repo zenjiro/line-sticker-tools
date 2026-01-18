@@ -71,19 +71,20 @@ validate_image() {
 # Process a single image file
 process_image() {
     local file="$1"
-    local filename extension basename
+    local filename extension basename basepath
     
     filename=$(basename -- "$file")
     extension="${filename##*.}"
     basename="${filename%.*}"
+    basepath="${file%.*}"
     
-    log_info "Processing $file -> ${basename}-0.${extension} ... ${basename}-8.${extension}"
+    log_info "Processing $file -> ${basepath}-0.${extension} ... ${basepath}-8.${extension}"
     
     # Check if output files already exist
     local existing_files=()
     for i in {0..8}; do
-        if [ -f "${basename}-${i}.${extension}" ]; then
-            existing_files+=("${basename}-${i}.${extension}")
+        if [ -f "${basepath}-${i}.${extension}" ]; then
+            existing_files+=("${basepath}-${i}.${extension}")
         fi
     done
     
@@ -95,22 +96,22 @@ process_image() {
     fi
     
     # Perform the conversion with error handling
-    if convert "$file" -crop 3x3@ +repage -trim +repage +adjoin "${basename}-%d.${extension}" 2>/dev/null; then
+    if convert "$file" -crop 3x3@ +repage -trim +repage +adjoin "${basepath}-%d.${extension}"; then
         # Verify all 9 files were created
         local created_count=0
         for i in {0..8}; do
-            if [ -f "${basename}-${i}.${extension}" ]; then
-                ((created_count++))
+            if [ -f "${basepath}-${i}.${extension}" ]; then
+                ((created_count+=1))
             fi
         done
         
         if [ $created_count -eq 9 ]; then
             log_info "Successfully created $created_count files"
+            return 0
         else
-            log_warn "Expected 9 files, but only $created_count were created"
+            log_error "Expected 9 files, but only $created_count were created"
+            return 1
         fi
-        
-        return 0
     else
         log_error "Failed to process $file"
         return 1
@@ -157,11 +158,11 @@ main() {
     local failed_files=()
     
     for file in "$@"; do
-        ((total_count++))
+        ((total_count+=1))
         
         if validate_image "$file"; then
             if process_image "$file"; then
-                ((success_count++))
+                ((success_count+=1))
             else
                 failed_files+=("$file")
             fi

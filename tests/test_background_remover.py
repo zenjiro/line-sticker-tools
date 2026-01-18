@@ -83,9 +83,9 @@ class TestBackgroundRemover:
     """Test background removal functions."""
     
     @patch('background_remover.subprocess.run')
-    @patch('background_remover.get_image_dimensions')
-    @patch('background_remover.count_opaque_pixels')
-    @patch('background_remover.count_holes')
+    @patch('background_remover.image_analyzer.get_image_dimensions')
+    @patch('background_remover.image_analyzer.count_opaque_pixels')
+    @patch('background_remover.image_analyzer.count_holes')
     def test_process_fuzz_value_success(self, mock_holes, mock_opaque, 
                                        mock_dimensions, mock_subprocess):
         """Test successful fuzz value processing."""

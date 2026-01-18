@@ -16,7 +16,7 @@ def remove_background(image_path, bg_color):
             "-fuzz", "25%",
             "-transparent", rgb_str,
             "-trim", "+repage",
-            str(output_path)
+            f"png32:{output_path}"
         ]
         
         subprocess.run(cmd, check=True, capture_output=True)

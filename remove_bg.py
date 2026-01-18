@@ -8,16 +8,18 @@ import background_utils
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python remove_bg.py <image_file> [image_file2] ...")
+        print("Usage: python remove_bg.py <image_file> [image_file2] ...", file=sys.stderr)
         return 1
     
     image_files = sys.argv[1:]
+    any_failed = False
     
     for image_file in image_files:
         image_path = Path(image_file)
         
         if not image_path.exists():
-            print(f"File not found: {image_file}")
+            print(f"File not found: {image_file}", file=sys.stderr)
+            any_failed = True
             continue
             
         print(f"Processing {image_file}...")
@@ -25,7 +27,8 @@ def main():
         # Get background color
         bg_color = image_utils.get_border_color(str(image_path))
         if not bg_color:
-            print(f"Could not detect background color for {image_file}")
+            print(f"Could not detect background color for {image_file}", file=sys.stderr)
+            any_failed = True
             continue
         
         # Remove background
@@ -36,8 +39,9 @@ def main():
             print(f"Success: {output_name}")
         else:
             print(f"Failed to process {image_file}")
+            any_failed = True
     
-    return 0
+    return 1 if any_failed else 0
 
 
 if __name__ == "__main__":
