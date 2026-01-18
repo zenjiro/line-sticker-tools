@@ -1,128 +1,350 @@
 #!/bin/bash
 
 #
-# このスクリプトは、指定されたディレクトリにあるすべてのPNG画像を、
-# 目標の縦横比になるように透明な余白を追加してリサイズします。
+# Enhanced aspect ratio adjustment script with improved error handling and validation
+# This script adjusts all PNG images in a directory to the target aspect ratio
+# by adding transparent padding while preserving the original content.
 #
 
-# --- 設定 ---
-# 目標の縦横比（幅 / 高さ）
-TARGET_W=216
-TARGET_H=185
-# --- 設定ここまで ---
+set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
+# --- Configuration ---
+readonly TARGET_W=216
+readonly TARGET_H=185
+readonly SCRIPT_NAME=$(basename "$0")
 
-# --- スクリプト本体 ---
+# Color codes for output
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly NC='\033[0m' # No Color
 
-# 引数の数を確認
-if [ "$#" -ne 1 ]; then
-    echo "使用法: $0 <画像が含まれるディレクトリ>"
-    exit 1
-fi
+# --- Logging Functions ---
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
 
-# 入力ディレクトリを変数に格納（末尾のスラッシュを削除）
-INPUT_DIR=${1%/}
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1" >&2
+}
 
-# 入力ディレクトリの存在を確認
-if [ ! -d "$INPUT_DIR" ]; then
-    echo "エラー: ディレクトリ '$INPUT_DIR' が見つかりません。"
-    exit 1
-fi
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1" >&2
+}
 
-# 出力ディレクトリ名を生成
-OUTPUT_DIR="${INPUT_DIR}-216x185"
+log_debug() {
+    if [ "${DEBUG:-0}" = "1" ]; then
+        echo -e "${BLUE}[DEBUG]${NC} $1" >&2
+    fi
+}
 
+# --- Dependency Checking ---
+check_dependencies() {
+    local missing_deps=()
+    
+    if ! command -v convert &> /dev/null; then
+        missing_deps+=("ImageMagick convert")
+    fi
+    
+    if ! command -v identify &> /dev/null; then
+        missing_deps+=("ImageMagick identify")
+    fi
+    
+    if ! command -v bc &> /dev/null; then
+        missing_deps+=("bc (calculator)")
+    fi
+    
+    if ! command -v awk &> /dev/null; then
+        missing_deps+=("awk")
+    fi
+    
+    if [ ${#missing_deps[@]} -ne 0 ]; then
+        log_error "Missing required dependencies:"
+        for dep in "${missing_deps[@]}"; do
+            log_error "  - $dep"
+        done
+        log_error "Please install the missing dependencies to continue."
+        exit 1
+    fi
+}
 
-# 依存コマンドの存在チェック
-if ! command -v convert &> /dev/null || ! command -v identify &> /dev/null; then
-    echo "エラー: ImageMagick (convert, identify) がインストールされていません。スクリプトを実行するにはインストールしてください。"
-    exit 1
-fi
-if ! command -v bc &> /dev/null; then
-    echo "エラー: 'bc' がインストールされていません。スクリプトを実行するにはインストールしてください。"
-    exit 1
-fi
+# --- Input Validation ---
+validate_directory() {
+    local input_dir="$1"
+    
+    if [ ! -d "$input_dir" ]; then
+        log_error "Directory '$input_dir' does not exist."
+        return 1
+    fi
+    
+    if [ ! -r "$input_dir" ]; then
+        log_error "Directory '$input_dir' is not readable."
+        return 1
+    fi
+    
+    # Check if directory contains PNG files
+    if ! ls "$input_dir"/*.png &>/dev/null; then
+        log_warn "No PNG files found in '$input_dir'."
+        return 1
+    fi
+    
+    return 0
+}
 
-echo "入力ディレクトリ: $INPUT_DIR"
-echo "出力ディレクトリ: $OUTPUT_DIR"
-echo "目標の縦横比: $TARGET_W : $TARGET_H"
+validate_output_directory() {
+    local output_dir="$1"
+    
+    # Safety check: ensure output directory name is not empty or root
+    if [ -z "$output_dir" ] || [ "$output_dir" = "/" ]; then
+        log_error "Invalid output directory name: '$output_dir'"
+        return 1
+    fi
+    
+    # Check if output directory exists and has content
+    if [ -d "$output_dir" ]; then
+        local png_count
+        png_count=$(find "$output_dir" -name "*.png" -type f 2>/dev/null | wc -l)
+        if [ "$png_count" -gt 0 ]; then
+            log_warn "Output directory '$output_dir' contains $png_count PNG files that will be removed."
+        fi
+    fi
+    
+    return 0
+}
 
-# 安全性チェック: OUTPUT_DIRが空でないか、ルートディレクトリでないかを確認
-if [ -z "$OUTPUT_DIR" ] || [ "$OUTPUT_DIR" = "/" ]; then
-    echo "エラー: 出力ディレクトリ名が不正です。処理を中止します。"
-    exit 1
-fi
+# --- Image Processing ---
+get_image_dimensions() {
+    local file="$1"
+    local dimensions
+    
+    if ! dimensions=$(identify -format "%wx%h" "$file" 2>/dev/null); then
+        log_error "Failed to get dimensions for $(basename "$file")"
+        return 1
+    fi
+    
+    echo "$dimensions"
+}
 
-# 出力ディレクトリが存在する場合、既存PNGファイルを削除
-if [ -d "$OUTPUT_DIR" ]; then
-    echo "出力ディレクトリ内の既存PNGファイルを削除しています..."
-    # -f オプションでファイルが無くてもエラーにしない
-    rm -f "$OUTPUT_DIR"/*.png
-fi
+calculate_target_dimensions() {
+    local orig_w="$1"
+    local orig_h="$2"
+    local target_aspect current_aspect final_w final_h is_wider
+    
+    # Calculate aspect ratios
+    target_aspect=$(awk "BEGIN {print $TARGET_W/$TARGET_H}")
+    current_aspect=$(awk "BEGIN {print $orig_w/$orig_h}")
+    
+    # Determine if image is wider than target ratio
+    is_wider=$(echo "$current_aspect > $target_aspect" | bc -l)
+    
+    if [ "$is_wider" -eq 1 ]; then
+        # Image is wider: maintain width, adjust height
+        final_w=$orig_w
+        final_h=$(awk "BEGIN {print int($orig_w / $target_aspect + 0.5)}")
+    else
+        # Image is taller or same ratio: maintain height, adjust width
+        final_h=$orig_h
+        final_w=$(awk "BEGIN {print int($orig_h * $target_aspect + 0.5)}")
+    fi
+    
+    # Ensure dimensions are even numbers
+    if [ $((final_w % 2)) -ne 0 ]; then
+        final_w=$((final_w + 1))
+    fi
+    if [ $((final_h % 2)) -ne 0 ]; then
+        final_h=$((final_h + 1))
+    fi
+    
+    echo "${final_w}x${final_h}"
+}
 
-# 出力ディレクトリを作成（存在しない場合も含む）
-mkdir -p "$OUTPUT_DIR"
+process_image() {
+    local file="$1"
+    local filename orig_dims orig_w orig_h final_dims
+    
+    filename=$(basename "$file")
+    log_debug "Processing: $filename"
+    
+    # Get original dimensions
+    if ! orig_dims=$(get_image_dimensions "$file"); then
+        log_error "Skipping $filename due to dimension error"
+        return 1
+    fi
+    
+    orig_w=$(echo "$orig_dims" | cut -d'x' -f1)
+    orig_h=$(echo "$orig_dims" | cut -d'x' -f2)
+    
+    # Validate dimensions
+    if [ -z "$orig_w" ] || [ -z "$orig_h" ] || [ "$orig_h" -eq 0 ]; then
+        log_error "Invalid dimensions for $filename: $orig_dims"
+        return 1
+    fi
+    
+    # Calculate target dimensions
+    final_dims=$(calculate_target_dimensions "$orig_w" "$orig_h")
+    
+    log_debug "$filename: $orig_dims -> $final_dims"
+    
+    # Apply padding and resize
+    if convert "$file" \
+        -background transparent -gravity center \
+        -extent "$final_dims" \
+        "$file" 2>/dev/null; then
+        return 0
+    else
+        log_error "Failed to process $filename"
+        return 1
+    fi
+}
 
-# 画像を入力ディレクトリから出力ディレクトリへコピー
-echo "画像をコピーしています..."
-cp "$INPUT_DIR"/*.png "$OUTPUT_DIR/" 2>/dev/null || true
+# --- Main Processing ---
+process_directory() {
+    local input_dir="$1"
+    local output_dir="$2"
+    local success_count=0
+    local total_count=0
+    local failed_files=()
+    
+    log_info "Processing images from '$input_dir' to '$output_dir'"
+    log_info "Target aspect ratio: $TARGET_W:$TARGET_H"
+    
+    # Create and prepare output directory
+    mkdir -p "$output_dir"
+    
+    # Remove existing PNG files in output directory
+    if [ -d "$output_dir" ]; then
+        rm -f "$output_dir"/*.png 2>/dev/null || true
+    fi
+    
+    # Copy PNG files to output directory
+    log_info "Copying images..."
+    if ! cp "$input_dir"/*.png "$output_dir/" 2>/dev/null; then
+        log_error "Failed to copy images to output directory"
+        return 1
+    fi
+    
+    # Process each PNG file in output directory
+    for file in "$output_dir"/*.png; do
+        if [ -f "$file" ]; then
+            ((total_count++))
+            if process_image "$file"; then
+                ((success_count++))
+            else
+                failed_files+=("$(basename "$file")")
+            fi
+        fi
+    done
+    
+    # Report results
+    log_info "Processing complete: $success_count/$total_count files successful"
+    
+    if [ ${#failed_files[@]} -gt 0 ]; then
+        log_warn "Failed to process the following files:"
+        for failed_file in "${failed_files[@]}"; do
+            log_warn "  - $failed_file"
+        done
+        return 1
+    fi
+    
+    log_info "All images have been adjusted and saved to '$output_dir'"
+    return 0
+}
 
-# コピーされたPNGファイルが存在するか確認
-if ! ls "$OUTPUT_DIR"/*.png &>/dev/null; then
-    echo "警告: '$INPUT_DIR' にPNGファイルが見つからなかったか、コピーに失敗しました。"
-    rmdir "$OUTPUT_DIR" # 空のディレクトリは削除
-    exit 0
-fi
+# --- Usage Information ---
+show_usage() {
+    cat << EOF
+Usage: $SCRIPT_NAME <input_directory>
 
-# 目標の縦横比を浮動小数点数で計算
-TARGET_ASPECT=$(awk "BEGIN {print $TARGET_W/$TARGET_H}")
+Adjust all PNG images in a directory to the target aspect ratio ($TARGET_W:$TARGET_H)
+by adding transparent padding while preserving the original content.
 
-# 出力ディレクトリ内のすべてのPNGファイルを処理
-for file in "$OUTPUT_DIR"/*.png
-do
-  echo "処理中: $(basename "$file")..."
+Arguments:
+  input_directory    Directory containing PNG images to process
 
-  # 画像のサイズを取得
-  orig_dims=$(identify -format "%wx%h" "$file")
-  orig_w=$(echo "$orig_dims" | cut -d'x' -f1)
-  orig_h=$(echo "$orig_dims" | cut -d'x' -f2)
+Options:
+  -h, --help        Show this help message
+  -d, --debug       Enable debug output
 
-  # サイズが正しく取得できたか確認
-  if [ -z "$orig_w" ] || [ -z "$orig_h" ] || [ "$orig_h" -eq 0 ]; then
-    echo "警告: $(basename "$file") のサイズが取得できませんでした。スキップします。"
-    continue
-  fi
+Environment Variables:
+  DEBUG=1           Enable debug output
 
-  current_aspect=$(awk "BEGIN {print $orig_w/$orig_h}")
+Examples:
+  $SCRIPT_NAME my_images/
+  DEBUG=1 $SCRIPT_NAME my_images/
 
-  # 縦横比を比較
-  is_wider=$(echo "$current_aspect > $TARGET_ASPECT" | bc -l)
+Output:
+  Creates a new directory named '<input_directory>-216x185' containing
+  the processed images with adjusted aspect ratios.
 
-  if [ "$is_wider" -eq 1 ]; then
-    # 画像が目標より「横長」の場合：幅を維持し、高さを調整
-    final_w=$orig_w
-    final_h=$(awk "BEGIN {print int($orig_w / $TARGET_ASPECT + 0.5)}")
-  else
-    # 画像が目標より「縦長」または同じ比率の場合：高さを維持し、幅を調整
-    final_h=$orig_h
-    final_w=$(awk "BEGIN {print int($orig_h * $TARGET_ASPECT + 0.5)}")
-  fi
+EOF
+}
 
-  # 最終的なサイズを偶数に調整
-  if [ $((final_w % 2)) -ne 0 ]; then
-    final_w=$((final_w + 1))
-  fi
-  if [ $((final_h % 2)) -ne 0 ]; then
-    final_h=$((final_h + 1))
-  fi
+# --- Main Function ---
+main() {
+    local input_dir output_dir
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_usage
+                exit 0
+                ;;
+            -d|--debug)
+                export DEBUG=1
+                shift
+                ;;
+            -*)
+                log_error "Unknown option: $1"
+                show_usage
+                exit 1
+                ;;
+            *)
+                if [ -z "${input_dir:-}" ]; then
+                    input_dir="$1"
+                else
+                    log_error "Too many arguments. Only one directory should be specified."
+                    show_usage
+                    exit 1
+                fi
+                shift
+                ;;
+        esac
+    done
+    
+    # Check if input directory was provided
+    if [ -z "${input_dir:-}" ]; then
+        log_error "No input directory specified."
+        show_usage
+        exit 1
+    fi
+    
+    # Remove trailing slash from input directory
+    input_dir=${input_dir%/}
+    output_dir="${input_dir}-216x185"
+    
+    # Check dependencies
+    check_dependencies
+    
+    # Validate input
+    if ! validate_directory "$input_dir"; then
+        exit 1
+    fi
+    
+    if ! validate_output_directory "$output_dir"; then
+        exit 1
+    fi
+    
+    # Process the directory
+    if process_directory "$input_dir" "$output_dir"; then
+        log_info "Success! Processed images are available in '$output_dir'"
+        exit 0
+    else
+        log_error "Processing failed. Some images may not have been processed correctly."
+        exit 1
+    fi
+}
 
-  # 画像をパディングして新しいサイズに調整（ファイルを上書き）
-  convert "$file" \
-    -background transparent -gravity center \
-    -extent "${final_w}x${final_h}" \
-    "$file"
-done
-
-echo "-------------------------------------"
-echo "すべての処理が完了しました。"
-echo "リサイズされた画像は '$OUTPUT_DIR' に保存されています。"
+# Run main function
+main "$@"
