@@ -1,0 +1,50 @@
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: #0f0f1a;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 12px;
+}
+
+.status-message {
+    color: #00d4ff;
+    font-weight: 500;
+}
+
+.status-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-item.valid {
+    color: #26de81;
+}
+
+.status-item.invalid {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.export-status {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.export-status.ready {
+    background: linear-gradient(135deg, #26de81, #20bf6b);
+    color: #0f0f1a;
+}
+
+.export-status.not-ready {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+}
