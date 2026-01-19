@@ -38,3 +38,4 @@ venv.bak/
 *-216x185/
 # Sticker directories
 [0-9]*-*/
+worktree/
