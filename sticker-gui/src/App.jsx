@@ -29,8 +29,8 @@ function App() {
   const [activeArea, setActiveArea] = useState('main'); // 'main' | 'trash'
   const [trashFocusIndex, setTrashFocusIndex] = useState(0);
 
-  // Message for user feedback
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const fileInputRef = useRef(null);
   const containerRef = useRef(null);
@@ -100,6 +100,9 @@ function App() {
     const files = Array.from(e.target.files);
     const imageFiles = files.filter(f => f.type.startsWith('image/'));
 
+    if (imageFiles.length === 0) return;
+
+    setIsLoading(true);
     Promise.all(imageFiles.map((file, idx) => {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -116,6 +119,7 @@ function App() {
       });
     })).then((newImages) => {
       setImages(prev => [...prev, ...newImages]);
+      setIsLoading(false);
       showMessage(`${newImages.length}枚の画像を読み込みました`);
     });
   }, [images.length, showMessage]);
@@ -126,6 +130,9 @@ function App() {
     const files = Array.from(e.dataTransfer.files);
     const imageFiles = files.filter(f => f.type.startsWith('image/'));
 
+    if (imageFiles.length === 0) return;
+
+    setIsLoading(true);
     Promise.all(imageFiles.map((file, idx) => {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -142,6 +149,7 @@ function App() {
       });
     })).then((newImages) => {
       setImages(prev => [...prev, ...newImages]);
+      setIsLoading(false);
       showMessage(`${newImages.length}枚の画像を読み込みました`);
     });
   }, [images.length, showMessage]);
@@ -346,7 +354,16 @@ function App() {
         ...prev.slice(restoreIdx)
       ]);
       setTrashImages(prev => prev.filter((_, i) => i !== trashFocusIndex));
-      if (trashFocusIndex >= trashImages.length - 1) {
+
+      // If trash becomes empty, switch back to main area and focus the restored item (or end)
+      if (trashImages.length <= 1) { // We just removed the last one
+        setActiveArea('main');
+        setFocusIndex(Math.min(images.length, restoreIdx)); // Focus the restored item
+        // Wait, images.length is BEFORE update here? No, setImages is async but calculation is based on prev + current.
+        // Actually, better to just focus the end of main list or where we inserted.
+        // Effect dependency might handle it but let's be explicit.
+        // Since we are adding an item, the new index will be valid.
+      } else if (trashFocusIndex >= trashImages.length - 1) {
         setTrashFocusIndex(Math.max(0, trashImages.length - 2));
       }
       showMessage('元の位置に復元しました');
@@ -546,8 +563,14 @@ function App() {
       <main className="main-area">
         {images.length === 0 ? (
           <div className="drop-zone">
-            <p>ここに画像をドラッグ＆ドロップ</p>
-            <p>または「画像を追加」ボタンをクリック</p>
+            {isLoading ? (
+              <p>読み込み中...</p>
+            ) : (
+              <>
+                <p>ここに画像をドラッグ＆ドロップ</p>
+                <p>または「画像を追加」ボタンをクリック</p>
+              </>
+            )}
           </div>
         ) : (
           <ImageGrid

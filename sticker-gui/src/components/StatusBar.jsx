@@ -8,7 +8,7 @@ function StatusBar({ message, imageCount, hasMain, hasTab }) {
     return (
         <div className="status-bar">
             <div className="status-message">
-                {message || '矢印:移動 / Space:選択 / Alt+矢印:並替 / M:メイン / T:タブ / Del:削除'}
+                {message || '矢印:移動 / Space:選択 / Alt+矢印:並替 / Shift+矢印:範囲 / M:メイン / T:タブ / Del:削除'}
             </div>
             <div className="status-info">
                 <span className={`status-item ${isValidCount ? 'valid' : 'invalid'}`}>
