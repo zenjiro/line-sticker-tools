@@ -1,16 +1,47 @@
-# React + Vite
+# sticker-gui
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+LINEスタンプ申請用の画像ファイルを整理し、ZIPファイルとしてエクスポートするためのWebアプリケーションです。
 
-Currently, two official plugins are available:
+## 主な機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **画像のインポート**: ドラッグ＆ドロップまたはファイル選択で画像を読み込めます。
+- **直感的な整理**: キーボードショートカットを使用して、画像の並び替えや選択がスムーズに行えます。
+- **メイン・タブ画像設定**: スタンプのメイン画像とタブ画像を簡単に指定できます。
+- **ゴミ箱機能**: 不要な画像を一時的に退避し、必要に応じて復元できます。
+- **ZIPエクスポート**: LINE Creators Marketの規定（8, 16, 24, 32, 40枚）を満たすかチェックし、申請用の形式でZIPファイルを作成します。
 
-## React Compiler
+## 実行方法
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Node.jsがインストールされている必要があります。
 
-## Expanding the ESLint configuration
+1. 依存パッケージのインストール
+   ```bash
+   npm install
+   ```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+2. 開発サーバーの起動
+   ```bash
+   npm run dev
+   ```
+
+3. ブラウザで表示されるURL（通常は `http://localhost:5173`）にアクセスしてください。
+
+## キーボードショートカット
+
+効率的な作業のために、以下のショートカットキーが利用可能です。
+
+| キー | アクション |
+|---|---|
+| `矢印キー` | フォーカスの移動 |
+| `Alt` + `矢印キー` | 選択した画像の移動 |
+| `Shift` + `矢印キー` | 範囲選択 |
+| `Space` | 選択の切り替え（複数選択） |
+| `M` | 選択中の画像を**メイン画像**に設定 |
+| `T` | 選択中の画像を**タブ画像**に設定 |
+| `Delete` / `Backspace` | ゴミ箱へ移動 / 復元 |
+| `Ctrl` + `X` | 画像をカット |
+| `Ctrl` + `V` | 画像をペースト（挿入） |
+| `Esc` | カットのキャンセル / 選択解除 |
+| `Ctrl` + `+` / `-` | 画像の拡大 / 縮小 |
+| `Ctrl` + `0` | ズームのリセット |
+| `E` | ZIPエクスポート |
