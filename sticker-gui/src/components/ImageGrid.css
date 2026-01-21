@@ -12,13 +12,16 @@
   overflow: hidden;
   background: #1a1a2e;
   border: 3px solid transparent;
-  transition: all 0.15s ease;
+  transition: all 0.5s ease-out;
+  /* Slow fade out for persistence */
   cursor: default;
 }
 
 .image-tile.focused {
   border-color: #00d4ff;
   box-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
+  transition: all 0.1s ease-out;
+  /* Fast fade in */
 }
 
 .image-tile.selected .checkbox {
@@ -41,19 +44,17 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 5px,
-    rgba(255, 255, 255, 0.1) 5px,
-    rgba(255, 255, 255, 0.1) 10px
-  );
+  background: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 5px,
+      rgba(255, 255, 255, 0.1) 5px,
+      rgba(255, 255, 255, 0.1) 10px);
 }
 
 .tile-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .checkbox {
