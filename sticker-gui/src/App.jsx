@@ -164,6 +164,14 @@ function App() {
   // Implicit selection if nothing selected
   const moveSelected = useCallback((direction) => {
     let effectiveSelection = selectedIndices;
+    // Safety check: if we have a selection but focus is outside it, just move focus to selection
+    if (selectedIndices.size > 0 && !selectedIndices.has(focusIndex)) {
+      const sorted = Array.from(selectedIndices).sort((a, b) => a - b);
+      const lastSelected = sorted[sorted.length - 1];
+      setFocusIndex(lastSelected);
+      return;
+    }
+
     if (selectedIndices.size === 0) {
       effectiveSelection = new Set([focusIndex]);
     }
@@ -282,6 +290,14 @@ function App() {
   const handleDelete = useCallback(() => {
     if (activeArea === 'main') {
       if (focusIndex >= images.length) return; // dummy tile
+
+      // Safety check: if we have a selection but focus is outside it, just move focus to selection
+      if (selectedIndices.size > 0 && !selectedIndices.has(focusIndex)) {
+        const sorted = Array.from(selectedIndices).sort((a, b) => a - b);
+        const lastSelected = sorted[sorted.length - 1];
+        setFocusIndex(lastSelected);
+        return;
+      }
 
       const targets = selectedIndices.size > 0 ? selectedIndices : new Set([focusIndex]);
 
