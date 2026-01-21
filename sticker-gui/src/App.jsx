@@ -180,8 +180,10 @@ function App() {
       return;
     }
 
+    let isImplicit = false;
     if (selectedIndices.size === 0) {
       effectiveSelection = new Set([focusIndex]);
+      isImplicit = true;
     }
 
     if (effectiveSelection.size === 0) return;
@@ -232,15 +234,24 @@ function App() {
     newFocusIdx = insertPos + focusOffset;
 
     setImages(newImages);
-    setSelectedIndices(newSelectedIdxs);
+    if (isImplicit) {
+      setSelectedIndices(new Set());
+    } else {
+      setSelectedIndices(newSelectedIdxs);
+    }
     setFocusIndex(newFocusIdx);
   }, [images, selectedIndices, focusIndex, gridColumns, showMessage]);
 
   // Cut operation
+  // Store if the cut was from implicit selection to restore correctly on cancel
+  const [cutWasImplicit, setCutWasImplicit] = useState(false);
+
   const handleCut = useCallback(() => {
     let targets = selectedIndices;
+    let isImplicit = false;
     if (targets.size === 0) {
       targets = new Set([focusIndex]);
+      isImplicit = true;
     }
 
     if (targets.size === 0 || focusIndex >= images.length) { // Check valid logic
@@ -248,6 +259,7 @@ function App() {
       return;
     }
     setCutIndices(new Set(targets));
+    setCutWasImplicit(isImplicit);
     showMessage(`${targets.size}枚の画像をカットしました`);
   }, [selectedIndices, focusIndex, images.length, showMessage]);
 
@@ -285,8 +297,13 @@ function App() {
   // Cancel cut
   const handleCancelCut = useCallback(() => {
     if (cutIndices.size > 0) {
-      setSelectedIndices(new Set(cutIndices));
+      if (!cutWasImplicit) {
+        setSelectedIndices(new Set(cutIndices));
+      } else {
+        setSelectedIndices(new Set());
+      }
       setCutIndices(new Set());
+      setCutWasImplicit(false);
       showMessage('カットを取り消しました');
     } else if (selectedIndices.size > 0) {
       // Esc to unselect

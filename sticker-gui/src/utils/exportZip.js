@@ -79,12 +79,12 @@ export async function exportZip(images, mainImage, tabImage) {
         zip.file(fileName, blob);
     }
 
-    // Process main image (240x240px, center crop)
-    const mainBlob = await resizeImage(mainImage.data, 240, 240, true);
+    // Process main image (240x240px, fit)
+    const mainBlob = await resizeImage(mainImage.data, 240, 240, false);
     zip.file('main.png', mainBlob);
 
-    // Process tab image (96x74px, center crop)
-    const tabBlob = await resizeImage(tabImage.data, 96, 74, true);
+    // Process tab image (96x74px, fit)
+    const tabBlob = await resizeImage(tabImage.data, 96, 74, false);
     zip.file('tab.png', tabBlob);
 
     // Generate and download ZIP
