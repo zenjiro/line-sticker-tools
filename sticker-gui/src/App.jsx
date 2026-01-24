@@ -604,7 +604,7 @@ function App() {
             {tabImageId && ` | ${t('tabSet')}`}
           </span>
           <button onClick={toggleLanguage} className="lang-toggle">
-            {language === 'en' ? '🇺🇸 EN' : '🇯🇵 JA'}
+            {language === 'en' ? 'JA' : 'EN'}
           </button>
           <button onClick={toggleTheme} title="テーマ切り替え">
             {theme === 'dark' ? '☀️' : '🌙'}
