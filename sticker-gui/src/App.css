@@ -1,0 +1,159 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.app-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-controls button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #7c3aed, #6366f1);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-controls button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+}
+
+.image-count {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.main-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 40px);
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 18px;
+  border: 3px dashed rgba(255, 255, 255, 0.15);
+  margin: 20px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.drop-zone:hover {
+  border-color: rgba(0, 212, 255, 0.4);
+  background: rgba(0, 212, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Keyboard shortcuts help */
+.keyboard-help {
+  position: fixed;
+  bottom: 60px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 300px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.keyboard-help h3 {
+  font-size: 12px;
+  margin-bottom: 8px;
+  color: #00d4ff;
+}
+
+.keyboard-help ul {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+}
+
+.keyboard-help li {
+  display: flex;
+  gap: 6px;
+}
+
+.keyboard-help kbd {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 10px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
