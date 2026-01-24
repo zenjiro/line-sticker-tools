@@ -21,6 +21,7 @@ function App() {
 
   // Cut/paste state
   const [cutIndices, setCutIndices] = useState(new Set());
+  const [cutWasImplicit, setCutWasImplicit] = useState(false);
 
   // Special images
   const [mainImageId, setMainImageId] = useState(null);
@@ -274,9 +275,6 @@ function App() {
   }, [images, selectedIndices, focusIndex, gridColumns, showMessage, t]);
 
   // Cut operation
-  // Store if the cut was from implicit selection to restore correctly on cancel
-  const [cutWasImplicit, setCutWasImplicit] = useState(false);
-
   const handleCut = useCallback(() => {
     let targets = selectedIndices;
     let isImplicit = false;
@@ -589,14 +587,8 @@ function App() {
       <header className="app-header">
         <h1>{t('title')}</h1>
         <div className="header-controls">
-          <button onClick={toggleLanguage} className="lang-toggle" style={{ marginRight: '10px' }}>
-            {language === 'en' ? '日本語' : 'English'}
-          </button>
           <button onClick={() => fileInputRef.current?.click()}>
             {t('addImages')}
-          </button>
-          <button onClick={toggleTheme} title="テーマ切り替え">
-            {theme === 'dark' ? '☀' : '🌙'}
           </button>
           <input
             ref={fileInputRef}
@@ -611,6 +603,12 @@ function App() {
             {mainImageId && ` | ${t('mainSet')}`}
             {tabImageId && ` | ${t('tabSet')}`}
           </span>
+          <button onClick={toggleLanguage} className="lang-toggle">
+            {language === 'en' ? '🇺🇸 EN' : '🇯🇵 JA'}
+          </button>
+          <button onClick={toggleTheme} title="テーマ切り替え">
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
         </div>
       </header>
 
