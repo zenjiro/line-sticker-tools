@@ -33,10 +33,6 @@ jobs:
         run: npm run build
         working-directory: sticker-gui
 
-      - name: Build (remove-bg-gui)
-        run: npm run build
-        working-directory: remove-bg-gui
-
       - name: Install Dependencies (divide-crop-gui)
         run: npm ci
         working-directory: divide-crop-gui
@@ -58,8 +54,6 @@ jobs:
         run: |
           mkdir -p combined-dist
           cp -r sticker-gui/dist/* combined-dist/
-          mkdir -p combined-dist/remove-bg
-          cp -r remove-bg-gui/dist/* combined-dist/remove-bg/
           mkdir -p combined-dist/divide-crop
           cp -r divide-crop-gui/dist/* combined-dist/divide-crop/
 
