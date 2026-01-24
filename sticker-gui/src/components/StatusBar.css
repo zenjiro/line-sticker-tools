@@ -3,13 +3,13 @@
     justify-content: space-between;
     align-items: center;
     padding: 8px 16px;
-    background: #0f0f1a;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
     font-size: 12px;
 }
 
 .status-message {
-    color: #00d4ff;
+    color: var(--border-active);
     font-weight: 500;
 }
 
@@ -30,7 +30,7 @@
 }
 
 .status-item.invalid {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-muted);
 }
 
 .export-status {
@@ -45,6 +45,6 @@
 }
 
 .export-status.not-ready {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.4);
+    background: var(--border-color);
+    color: var(--text-muted);
 }

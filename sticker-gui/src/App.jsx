@@ -38,6 +38,34 @@ function App() {
   // Calculate grid columns based on container width
   const [gridColumns, setGridColumns] = useState(8);
 
+  // Theme support
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // Listen for system theme changes if no manual override
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => {
+      if (!localStorage.getItem('theme')) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  }, []);
+
   useEffect(() => {
     const updateColumns = () => {
       if (containerRef.current) {
@@ -560,6 +588,9 @@ function App() {
         <div className="header-controls">
           <button onClick={() => fileInputRef.current?.click()}>
             画像を追加
+          </button>
+          <button onClick={toggleTheme} title="テーマ切り替え">
+            {theme === 'dark' ? '☀' : '🌙'}
           </button>
           <input
             ref={fileInputRef}
