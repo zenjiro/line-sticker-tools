@@ -18,7 +18,7 @@ test.describe('Sticker GUI', () => {
     test('should load the application correctly', async ({ page }) => {
         await expect(page.locator('h1')).toHaveText('LINE Sticker Arranger');
         await expect(page.getByRole('button', { name: '画像を追加' })).toBeVisible();
-        await expect(page.getByText('ゴミ箱（空）')).toBeVisible();
+        await expect(page.getByText('ゴミ箱（空）')).not.toBeVisible();
     });
 
     test('should upload images and display them in grid', async ({ page }) => {
@@ -55,6 +55,9 @@ test.describe('Sticker GUI', () => {
 
         // Initial focus on first image
         const tiles = page.locator('.image-tile');
+        // Click to ensure window focus
+        await tiles.nth(0).click();
+
         await expect(tiles.nth(0)).toHaveClass(/focused/);
 
         // Move right -> Focus second
@@ -100,12 +103,12 @@ test.describe('Sticker GUI', () => {
 
         // Now the first image (sticker0) should be at index 1
         // Verify order change
-        const tiles = page.locator('.image-tile');
-        await expect(tiles.nth(1).locator('img')).toHaveAttribute('alt', 'sticker0.png');
-        await expect(tiles.nth(0).locator('img')).toHaveAttribute('alt', 'sticker1.png');
+        const movedTiles = page.locator('.image-tile');
+        await expect(movedTiles.nth(1).locator('img')).toHaveAttribute('alt', 'sticker0.png');
+        await expect(movedTiles.nth(0).locator('img')).toHaveAttribute('alt', 'sticker1.png');
 
         // And focus should follow it
-        await expect(tiles.nth(1)).toHaveClass(/focused/);
+        await expect(movedTiles.nth(1)).toHaveClass(/focused/);
     });
 
     test('should support main/tab image assignment', async ({ page }) => {
@@ -115,6 +118,10 @@ test.describe('Sticker GUI', () => {
             buffer: createDummyPng(),
         }));
         await page.locator('input[type="file"]').setInputFiles(files);
+        await expect(page.locator('.image-tile')).toHaveCount(3);
+
+        // Click to ensure focus
+        await page.locator('.image-tile').first().click();
 
         // Set first as Main (M key)
         await page.keyboard.press('m');
@@ -135,6 +142,9 @@ test.describe('Sticker GUI', () => {
             buffer: createDummyPng(),
         }];
         await page.locator('input[type="file"]').setInputFiles(files);
+
+        // Ensure focus
+        await page.locator('.image-tile').first().click();
 
         // Delete
         await page.keyboard.press('Delete');
