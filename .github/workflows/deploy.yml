@@ -25,11 +25,11 @@ jobs:
           cache: 'npm'
           cache-dependency-path: sticker-gui/package-lock.json
 
-      - name: Install Dependencies
+      - name: Install Dependencies (sticker-gui)
         run: npm ci
         working-directory: sticker-gui
 
-      - name: Build
+      - name: Build (sticker-gui)
         run: npm run build
         working-directory: sticker-gui
 
