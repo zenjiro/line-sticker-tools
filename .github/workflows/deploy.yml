@@ -22,6 +22,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+          cache-dependency-path: sticker-gui/package-lock.json
 
       - name: Install Dependencies (sticker-gui)
         run: npm ci
@@ -31,13 +33,13 @@ jobs:
         run: npm run build
         working-directory: sticker-gui
 
-      - name: Install Dependencies (remove-bg-gui)
+      - name: Install Dependencies (divide-crop-gui)
         run: npm ci
-        working-directory: remove-bg-gui
+        working-directory: divide-crop-gui
 
-      - name: Build (remove-bg-gui)
+      - name: Build (divide-crop-gui)
         run: npm run build
-        working-directory: remove-bg-gui
+        working-directory: divide-crop-gui
 
       - name: Determine Target Folder
         id: target
@@ -52,16 +54,16 @@ jobs:
         run: |
           mkdir -p combined-dist
           cp -r sticker-gui/dist/* combined-dist/
-          mkdir -p combined-dist/remove-bg
-          cp -r remove-bg-gui/dist/* combined-dist/remove-bg/
+          mkdir -p combined-dist/divide-crop
+          cp -r divide-crop-gui/dist/* combined-dist/divide-crop/
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: combined-dist
           target-folder: ${{ steps.target.outputs.folder }}
-          clean: ${{ github.event_name != 'pull_request' }}
-          clean-exclude: pr-preview/
+          clean: ${{ github.event_name != 'pull_request' }} # Only clean on main deployment to root, otherwise we wipe PRs
+          clean-exclude: pr-preview/ # When cleaning root, don't wipe pr-preview folder
 
       - name: Create Deployment Status
         if: github.event_name == 'pull_request'
