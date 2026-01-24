@@ -5,8 +5,11 @@ import TrashArea from './components/TrashArea';
 import StatusBar from './components/StatusBar';
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 import { exportZip } from './utils/exportZip';
+import { useLanguage } from './LanguageContext';
 
 function App() {
+  const { t, language, toggleLanguage } = useLanguage();
+
   // Image state
   const [images, setImages] = useState([]);
   const [trashImages, setTrashImages] = useState([]);
@@ -120,9 +123,9 @@ function App() {
     })).then((newImages) => {
       setImages(prev => [...prev, ...newImages]);
       setIsLoading(false);
-      showMessage(`${newImages.length}枚の画像を読み込みました`);
+      showMessage(t('imported', { count: newImages.length }));
     });
-  }, [images.length, showMessage]);
+  }, [images.length, showMessage, t]);
 
   // Handle drag and drop
   const handleDrop = useCallback((e) => {
@@ -150,9 +153,9 @@ function App() {
     })).then((newImages) => {
       setImages(prev => [...prev, ...newImages]);
       setIsLoading(false);
-      showMessage(`${newImages.length}枚の画像を読み込みました`);
+      showMessage(t('imported', { count: newImages.length }));
     });
-  }, [images.length, showMessage]);
+  }, [images.length, showMessage, t]);
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
@@ -192,7 +195,7 @@ function App() {
     const sorted = Array.from(effectiveSelection).sort((a, b) => a - b);
     for (let i = 1; i < sorted.length; i++) {
       if (sorted[i] - sorted[i - 1] !== 1) {
-        showMessage('連続した範囲を選択してください');
+        showMessage(t('continuousSelection'));
         return;
       }
     }
@@ -240,7 +243,7 @@ function App() {
       setSelectedIndices(newSelectedIdxs);
     }
     setFocusIndex(newFocusIdx);
-  }, [images, selectedIndices, focusIndex, gridColumns, showMessage]);
+  }, [images, selectedIndices, focusIndex, gridColumns, showMessage, t]);
 
   // Cut operation
   // Store if the cut was from implicit selection to restore correctly on cancel
@@ -255,18 +258,18 @@ function App() {
     }
 
     if (targets.size === 0 || focusIndex >= images.length) { // Check valid logic
-      showMessage('画像を選択してください');
+      showMessage(t('selectImage'));
       return;
     }
     setCutIndices(new Set(targets));
     setCutWasImplicit(isImplicit);
-    showMessage(`${targets.size}枚の画像をカットしました`);
-  }, [selectedIndices, focusIndex, images.length, showMessage]);
+    showMessage(t('cutImages', { count: targets.size }));
+  }, [selectedIndices, focusIndex, images.length, showMessage, t]);
 
   // Paste operation
   const handlePaste = useCallback(() => {
     if (cutIndices.size === 0) {
-      showMessage('カットされた画像がありません');
+      showMessage(t('noCutImages'));
       return;
     }
 
@@ -291,8 +294,8 @@ function App() {
     setImages(newImages);
     setCutIndices(new Set());
     setSelectedIndices(new Set());
-    showMessage(`${cutImages.length}枚の画像を挿入しました`);
-  }, [cutIndices, images, focusIndex, showMessage]);
+    showMessage(t('pastedImages', { count: cutImages.length }));
+  }, [cutIndices, images, focusIndex, showMessage, t]);
 
   // Cancel cut
   const handleCancelCut = useCallback(() => {
@@ -304,12 +307,12 @@ function App() {
       }
       setCutIndices(new Set());
       setCutWasImplicit(false);
-      showMessage('カットを取り消しました');
+      showMessage(t('cutCancelled'));
     } else if (selectedIndices.size > 0) {
       // Esc to unselect
       setSelectedIndices(new Set());
     }
-  }, [cutIndices, selectedIndices, showMessage]);
+  }, [cutIndices, selectedIndices, showMessage, t]);
 
   // Delete to trash
   const handleDelete = useCallback(() => {
@@ -357,7 +360,7 @@ function App() {
         setFocusIndex(Math.min(focusIndex, newImages.length));
       }
 
-      showMessage(`${targets.size}枚をゴミ箱に移動しました`);
+      showMessage(t('trashMoved', { count: targets.size }));
     } else {
       // Restore from trash
       if (trashFocusIndex >= trashImages.length) return;
@@ -383,25 +386,25 @@ function App() {
       } else if (trashFocusIndex >= trashImages.length - 1) {
         setTrashFocusIndex(Math.max(0, trashImages.length - 2));
       }
-      showMessage('元の位置に復元しました');
+      showMessage(t('restored'));
     }
-  }, [activeArea, focusIndex, trashFocusIndex, images, trashImages, showMessage]);
+  }, [activeArea, focusIndex, trashFocusIndex, images, trashImages, showMessage, t]);
 
   // Set main image
   const handleSetMain = useCallback(() => {
     if (activeArea === 'main' && focusIndex < images.length) {
       setMainImageId(images[focusIndex].id);
-      showMessage('メイン画像に設定しました');
+      showMessage(t('mainSetSuccess'));
     }
-  }, [activeArea, focusIndex, images, showMessage]);
+  }, [activeArea, focusIndex, images, showMessage, t]);
 
   // Set tab image
   const handleSetTab = useCallback(() => {
     if (activeArea === 'main' && focusIndex < images.length) {
       setTabImageId(images[focusIndex].id);
-      showMessage('タブ画像に設定しました');
+      showMessage(t('tabSetSuccess'));
     }
-  }, [activeArea, focusIndex, images, showMessage]);
+  }, [activeArea, focusIndex, images, showMessage, t]);
 
   // Zoom controls
   const handleZoomIn = useCallback(() => {
@@ -420,28 +423,28 @@ function App() {
   const handleExport = useCallback(async () => {
     const validCounts = [8, 16, 24, 32, 40];
     if (!validCounts.includes(images.length)) {
-      showMessage(`画像数が無効です（${images.length}枚）。8, 16, 24, 32, 40枚のいずれかにしてください`);
+      showMessage(t('invalidCount', { count: images.length }));
       return;
     }
     if (!mainImageId) {
-      showMessage('メイン画像を設定してください（Mキー）');
+      showMessage(t('setMain'));
       return;
     }
     if (!tabImageId) {
-      showMessage('タブ画像を設定してください（Tキー）');
+      showMessage(t('setTab'));
       return;
     }
 
-    showMessage('エクスポート中...');
+    showMessage(t('exporting'));
     try {
       const mainImage = images.find(img => img.id === mainImageId);
       const tabImage = images.find(img => img.id === tabImageId);
       await exportZip(images, mainImage, tabImage);
-      showMessage('ZIPファイルをダウンロードしました');
+      showMessage(t('exported'));
     } catch (err) {
-      showMessage(`エクスポートエラー: ${err.message}`);
+      showMessage(t('exportError', { message: err.message }));
     }
-  }, [images, mainImageId, tabImageId, showMessage]);
+  }, [images, mainImageId, tabImageId, showMessage, t]);
 
   // Navigation
   const handleNavigate = useCallback((direction, shift) => {
@@ -556,10 +559,13 @@ function App() {
       onDragOver={handleDragOver}
     >
       <header className="app-header">
-        <h1>LINE Sticker Arranger</h1>
+        <h1>{t('title')}</h1>
         <div className="header-controls">
+          <button onClick={toggleLanguage} className="lang-toggle" style={{ marginRight: '10px' }}>
+            {language === 'en' ? '日本語' : 'English'}
+          </button>
           <button onClick={() => fileInputRef.current?.click()}>
-            画像を追加
+            {t('addImages')}
           </button>
           <input
             ref={fileInputRef}
@@ -570,9 +576,9 @@ function App() {
             style={{ display: 'none' }}
           />
           <span className="image-count">
-            {images.length}枚
-            {mainImageId && ' | メイン✓'}
-            {tabImageId && ' | タブ✓'}
+            {images.length}{t('imageCount')}
+            {mainImageId && ` | ${t('mainSet')}`}
+            {tabImageId && ` | ${t('tabSet')}`}
           </span>
         </div>
       </header>
@@ -581,11 +587,11 @@ function App() {
         {images.length === 0 ? (
           <div className="drop-zone">
             {isLoading ? (
-              <p>読み込み中...</p>
+              <p>{t('loading')}</p>
             ) : (
               <>
-                <p>ここに画像をドラッグ＆ドロップ</p>
-                <p>または「画像を追加」ボタンをクリック</p>
+                <p>{t('dropHere')}</p>
+                <p>{t('orClickButton')}</p>
               </>
             )}
           </div>

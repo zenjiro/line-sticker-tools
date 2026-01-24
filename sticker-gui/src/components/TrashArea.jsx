@@ -1,6 +1,9 @@
 import './TrashArea.css';
+import { useLanguage } from '../LanguageContext';
 
 function TrashArea({ images, focusIndex, imageSize }) {
+    const { t } = useLanguage();
+
     if (images.length === 0) {
         return null;
     }
@@ -9,7 +12,7 @@ function TrashArea({ images, focusIndex, imageSize }) {
         <div className="trash-area">
             <div className="trash-header">
                 <span className="trash-icon">🗑️</span>
-                <span>ゴミ箱（{images.length}枚）- Delete/BackSpaceで復元</span>
+                <span>{t('trashTitle', { count: images.length })}</span>
             </div>
             <div className="trash-grid">
                 {images.map((image, index) => (
@@ -32,3 +35,4 @@ function TrashArea({ images, focusIndex, imageSize }) {
 }
 
 export default TrashArea;
+
