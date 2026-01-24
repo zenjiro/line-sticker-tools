@@ -10,25 +10,25 @@
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  background: #1a1a2e;
+  background: var(--bg-secondary);
   border: 3px solid transparent;
   transition: all 0.15s ease;
   cursor: default;
 }
 
 .image-tile.focused {
-  border-color: #00d4ff;
+  border-color: var(--border-active);
   box-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
 }
 
 .image-tile.selected .checkbox {
-  background: #00d4ff;
-  border-color: #00d4ff;
+  background: var(--border-active);
+  border-color: var(--border-active);
 }
 
 .image-tile.selected .checkbox::after {
   content: '✓';
-  color: #1a1a2e;
+  color: var(--bg-secondary);
   font-size: 12px;
   font-weight: bold;
 }
@@ -44,8 +44,8 @@
   background: repeating-linear-gradient(45deg,
       transparent,
       transparent 5px,
-      rgba(255, 255, 255, 0.1) 5px,
-      rgba(255, 255, 255, 0.1) 10px);
+      var(--border-color) 5px,
+      var(--border-color) 10px);
 }
 
 .tile-image {
@@ -97,14 +97,14 @@
 
 .dummy-tile {
   background: transparent;
-  border: 3px dashed rgba(255, 255, 255, 0.2);
+  border: 3px dashed var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .dummy-tile.focused {
-  border-color: #00d4ff;
+  border-color: var(--border-active);
   border-style: dashed;
 }
 
