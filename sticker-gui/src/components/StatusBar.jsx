@@ -1,6 +1,8 @@
 import './StatusBar.css';
+import { useLanguage } from '../LanguageContext';
 
 function StatusBar({ message, imageCount, hasMain, hasTab }) {
+    const { t } = useLanguage();
     const validCounts = [8, 16, 24, 32, 40];
     const isValidCount = validCounts.includes(imageCount);
     const canExport = isValidCount && hasMain && hasTab;
@@ -8,20 +10,20 @@ function StatusBar({ message, imageCount, hasMain, hasTab }) {
     return (
         <div className="status-bar">
             <div className="status-message">
-                {message || '矢印:移動 / Space:選択 / Alt+矢印:並替 / Shift+矢印:範囲 / M:メイン / T:タブ / Del:削除'}
+                {message || t('shortcuts')}
             </div>
             <div className="status-info">
                 <span className={`status-item ${isValidCount ? 'valid' : 'invalid'}`}>
-                    {imageCount}枚 {isValidCount ? '✓' : `(${validCounts.join('/')}枚のいずれか)`}
+                    {imageCount}{t('imageCount')} {isValidCount ? t('valid') : t('anyOf', { counts: validCounts.join('/') })}
                 </span>
                 <span className={`status-item ${hasMain ? 'valid' : 'invalid'}`}>
-                    メイン {hasMain ? '✓' : '×'}
+                    {t('mainParams')} {hasMain ? t('valid') : t('invalid')}
                 </span>
                 <span className={`status-item ${hasTab ? 'valid' : 'invalid'}`}>
-                    タブ {hasTab ? '✓' : '×'}
+                    {t('tabParams')} {hasTab ? t('valid') : t('invalid')}
                 </span>
                 <span className={`export-status ${canExport ? 'ready' : 'not-ready'}`}>
-                    {canExport ? 'Eキーでエクスポート' : 'エクスポート不可'}
+                    {canExport ? t('exportReady') : t('exportNotReady')}
                 </span>
             </div>
         </div>
@@ -29,3 +31,4 @@ function StatusBar({ message, imageCount, hasMain, hasTab }) {
 }
 
 export default StatusBar;
+
