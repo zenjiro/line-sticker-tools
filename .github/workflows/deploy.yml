@@ -33,6 +33,18 @@ jobs:
         run: npm run build
         working-directory: sticker-gui
 
+      - name: Build (remove-bg-gui)
+        run: npm run build
+        working-directory: remove-bg-gui
+
+      - name: Install Dependencies (divide-crop-gui)
+        run: npm ci
+        working-directory: divide-crop-gui
+
+      - name: Build (divide-crop-gui)
+        run: npm run build
+        working-directory: divide-crop-gui
+
       - name: Determine Target Folder
         id: target
         run: |
@@ -42,10 +54,19 @@ jobs:
             echo "folder=." >> $GITHUB_OUTPUT
           fi
 
+      - name: Prepare Combined Dist
+        run: |
+          mkdir -p combined-dist
+          cp -r sticker-gui/dist/* combined-dist/
+          mkdir -p combined-dist/remove-bg
+          cp -r remove-bg-gui/dist/* combined-dist/remove-bg/
+          mkdir -p combined-dist/divide-crop
+          cp -r divide-crop-gui/dist/* combined-dist/divide-crop/
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: sticker-gui/dist
+          folder: combined-dist
           target-folder: ${{ steps.target.outputs.folder }}
           clean: ${{ github.event_name != 'pull_request' }} # Only clean on main deployment to root, otherwise we wipe PRs
           clean-exclude: pr-preview/ # When cleaning root, don't wipe pr-preview folder
