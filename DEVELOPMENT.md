@@ -7,7 +7,7 @@
 - **Python 3.11以上**
 - **uv** (Python パッケージマネージャー)
 - **ImageMagick** (`convert` コマンドを使用)
-- **Node.js** (sticker-guiをローカルで開発する場合)
+- **Node.js** (GUIsをローカルで開発する場合)
 
 ## インストール方法
 
@@ -16,8 +16,8 @@ git clone <repository-url>
 cd line-sticker-tools
 uv sync
 
-# sticker-guiをローカルで開発する場合
-cd sticker-gui
+# arrange-guiをローカルで開発する場合
+cd arrange-gui
 npm install
 ```
 
@@ -39,12 +39,12 @@ uv run pytest
 
 ---
 
-## sticker-gui の開発
+## GUI ツールの開発 (arrange-gui など)
 
 ### ローカルサーバーの起動
 
 ```bash
-cd sticker-gui
+cd arrange-gui  # または remove-bg-gui, divide-crop-gui
 npm run dev
 ```
 
@@ -80,10 +80,12 @@ npm run build
 │   ├── image_analyzer.py    # 画像解析機能
 │   └── background_remover.py# 背景除去処理
 ├── tests/                   # Pythonテストスイート
-├── sticker-gui/             # スタンプ確認・管理用Webアプリ
+├── arrange-gui/             # スタンプ確認・管理用Webアプリ (旧 sticker-gui)
 │   ├── src/                 # React ソースコード
 │   ├── tests/               # Playwright テスト
 │   └── ...
+├── remove-bg-gui/           # 背景除去GUI
+├── divide-crop-gui/         # 分割・切り抜きGUI
 ├── divide-crop-3x3.sh       # 画像分割スクリプト
 └── adjust-aspect-ratio.sh   # アスペクト比調整スクリプト
 ```

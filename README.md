@@ -38,19 +38,20 @@ uv run remove_bg.py image1.png image2.png image3.png
 ./adjust-aspect-ratio.sh directory_name
 ```
 
-### 4. パソコンで申請する場合 (sticker-gui)
+### 4. パソコンで申請する場合 (arrange-gui)
 
 ブラウザ上でスタンプのシミュレーションや管理ができるGUIツールです。GitHub Pagesにデプロイされているので、すぐに使えます。
 
-**🔗 [sticker-gui を開く](https://zenjiro.github.io/line-sticker-tools/)**
+**🔗 [Webツールを開く](https://zenjiro.github.io/line-sticker-tools/)**
+(トップページから Arrange GUI, Remove BG GUI, Divide & Crop GUI にアクセスできます)
 
-主な機能:
+主な機能 (Arrange GUI):
 - **ドラッグ＆ドロップ** で画像をインポート
 - **キーボードショートカット** で素早く整理
 - **メイン・タブ画像** の設定
 - **ZIPエクスポート** で申請用ファイルを作成
 
-詳しい使い方は [sticker-gui/README.md](sticker-gui/README.md) を参照してください。
+詳しい使い方は [arrange-gui/README.md](arrange-gui/README.md) を参照してください。
 
 ## 開発について
 
