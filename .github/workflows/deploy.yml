@@ -23,15 +23,22 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: sticker-gui/package-lock.json
-
-      - name: Install Dependencies (sticker-gui)
+          cache-dependency-path: '**/package-lock.json'
+      - name: Install Dependencies (arrange-gui)
         run: npm ci
-        working-directory: sticker-gui
+        working-directory: arrange-gui
 
-      - name: Build (sticker-gui)
+      - name: Build (arrange-gui)
         run: npm run build
-        working-directory: sticker-gui
+        working-directory: arrange-gui
+
+      - name: Install Dependencies (remove-bg-gui)
+        run: npm ci
+        working-directory: remove-bg-gui
+
+      - name: Build (remove-bg-gui)
+        run: npm run build
+        working-directory: remove-bg-gui
 
       - name: Install Dependencies (divide-crop-gui)
         run: npm ci
@@ -53,7 +60,21 @@ jobs:
       - name: Prepare Combined Dist
         run: |
           mkdir -p combined-dist
-          cp -r sticker-gui/dist/* combined-dist/
+          # Top page
+          cp top-gui/index.html combined-dist/
+          if [ -f top-gui/style.css ]; then
+            cp top-gui/style.css combined-dist/
+          fi
+          
+          # Arrange GUI
+          mkdir -p combined-dist/arrange
+          cp -r arrange-gui/dist/* combined-dist/arrange/
+          
+          # Remove BG GUI
+          mkdir -p combined-dist/remove-bg
+          cp -r remove-bg-gui/dist/* combined-dist/remove-bg/
+          
+          # Divide Crop GUI
           mkdir -p combined-dist/divide-crop
           cp -r divide-crop-gui/dist/* combined-dist/divide-crop/
 
