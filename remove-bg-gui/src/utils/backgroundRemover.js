@@ -70,7 +70,8 @@ export function fuzzToThreshold(fuzz) {
 }
 
 /**
- * Remove background from image using flood fill from edges.
+ * Remove background from image by making all matching-color pixels transparent.
+ * Similar to ImageMagick's -transparent flag behavior.
  * @param {ImageData} imageData - Canvas ImageData object (will be modified)
  * @param {{r: number, g: number, b: number}} bgColor - Background color to remove
  * @param {number} fuzz - Fuzz tolerance percentage (0-100)
@@ -79,60 +80,22 @@ export function fuzzToThreshold(fuzz) {
 export function removeBackground(imageData, bgColor, fuzz) {
     const { data, width, height } = imageData;
     const threshold = fuzzToThreshold(fuzz);
-    const visited = new Uint8Array(width * height);
 
-    // Flood fill queue starting from all edge pixels
-    const queue = [];
+    // Iterate over all pixels and make matching colors transparent
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const pixelIdx = (y * width + x) * 4;
+            const pixelColor = {
+                r: data[pixelIdx],
+                g: data[pixelIdx + 1],
+                b: data[pixelIdx + 2],
+            };
 
-    // Add all edge pixels to queue
-    for (let x = 0; x < width; x++) {
-        queue.push({ x, y: 0 });
-        queue.push({ x, y: height - 1 });
-    }
-    for (let y = 1; y < height - 1; y++) {
-        queue.push({ x: 0, y });
-        queue.push({ x: width - 1, y });
-    }
+            const distance = colorDistance(pixelColor, bgColor);
 
-    // Process queue
-    while (queue.length > 0) {
-        const { x, y } = queue.shift();
-        const idx = y * width + x;
-
-        if (visited[idx]) continue;
-        visited[idx] = 1;
-
-        const pixelIdx = idx * 4;
-        const pixelColor = {
-            r: data[pixelIdx],
-            g: data[pixelIdx + 1],
-            b: data[pixelIdx + 2],
-        };
-
-        const distance = colorDistance(pixelColor, bgColor);
-
-        if (distance <= threshold) {
-            // Make pixel transparent
-            data[pixelIdx + 3] = 0;
-
-            // Add neighbors to queue
-            const neighbors = [
-                { x: x - 1, y },
-                { x: x + 1, y },
-                { x, y: y - 1 },
-                { x, y: y + 1 },
-            ];
-
-            for (const neighbor of neighbors) {
-                if (
-                    neighbor.x >= 0 &&
-                    neighbor.x < width &&
-                    neighbor.y >= 0 &&
-                    neighbor.y < height &&
-                    !visited[neighbor.y * width + neighbor.x]
-                ) {
-                    queue.push(neighbor);
-                }
+            if (distance <= threshold) {
+                // Make pixel transparent
+                data[pixelIdx + 3] = 0;
             }
         }
     }
