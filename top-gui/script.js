@@ -117,8 +117,9 @@ class LanguageManager {
     updateButtonText() {
         const btn = document.getElementById('lang-toggle');
         if (btn) {
-            // Using the current language name for the button
-            btn.textContent = this.language === 'en' ? 'EN' : 'JP';
+            // Display the OTHER language (to switch to)
+            // If current is 'en', show 'JA'. If current is 'ja', show 'EN'.
+            btn.textContent = this.language === 'en' ? 'JA' : 'EN';
         }
     }
 }
