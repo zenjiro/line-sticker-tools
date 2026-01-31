@@ -7,7 +7,7 @@ function StatusBar({ message }) {
     return (
         <div className="status-bar">
             <div className="status-message">
-                {message || t('keyboardHelp')}
+                {message || t('shortcuts')}
             </div>
         </div>
     );

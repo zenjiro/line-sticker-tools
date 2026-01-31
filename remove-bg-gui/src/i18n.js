@@ -14,7 +14,7 @@ const translations = {
         exported: 'Export complete!',
         exportError: 'Export failed: {message}',
         noImages: 'No images to export',
-        keyboardHelp: 'Keyboard: ←↑→↓ Navigate | J/N Increase fuzz | K/P Decrease fuzz | E Export',
+        keyboardHelp: 'Arrows:Navigate / J/N:Fuzz Increase / K/P:Fuzz Decrease / E:Export',
     },
     ja: {
         title: '背景削除',
@@ -31,7 +31,7 @@ const translations = {
         exported: 'エクスポート完了！',
         exportError: 'エクスポート失敗: {message}',
         noImages: 'エクスポートする画像がありません',
-        keyboardHelp: 'キーボード: ←↑→↓ 移動 | J/N ファジー増 | K/P ファジー減 | E エクスポート',
+        keyboardHelp: '矢印:移動 / J/N:ファジー増 / K/P:ファジー減 / E:エクスポート',
     },
 };
 

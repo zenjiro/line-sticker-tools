@@ -1,11 +1,14 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import './App.css';
-import ImageCard from './components/ImageCard';
-import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
-import { exportZip } from './utils/exportZip';
+import StatusBar from './components/StatusBar';
 import { useLanguage } from './LanguageContext';
 
 function App() {
+  // ... (omitting lines for brevity, wait, replace_file_content needs context)
+  // Re-reading to target properly.
+  // I need to add the import at the top and replace the footer at the bottom.
+  // I cannot do two separate chunks in one go properly if they are far apart with single replace_file_content unless I use multi_replace.
+  // I will split this into two calls or use multi_replace.
+  // Using multi_replace is safer.
+
   const { t, language, toggleLanguage } = useLanguage();
 
   const [images, setImages] = useState([]);
@@ -244,10 +247,7 @@ function App() {
         )}
       </main>
 
-      <footer className="status-bar">
-        <div className="message">{message}</div>
-        <div className="shortcuts">{t('shortcuts')}</div>
-      </footer>
+      <StatusBar message={message} />
     </div>
   );
 }

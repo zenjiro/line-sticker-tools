@@ -390,7 +390,6 @@ function App() {
 
             <StatusBar
                 message={isProcessing ? t('loading') : message}
-                imageCount={images.length}
             />
         </div>
     );
