@@ -6,6 +6,7 @@
     background: var(--bg-primary);
     border-top: 1px solid var(--border-color);
     font-size: 12px;
+    min-height: 40px;
 }
 
 .status-message {
