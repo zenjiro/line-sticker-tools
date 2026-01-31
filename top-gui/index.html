@@ -56,8 +56,44 @@
                 </div>
             </div>
         </main>
+        <footer>
+            <div class="footer-content">←→:選択 / Enter/Space:決定</div>
+        </footer>
     </div>
     <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = Array.from(document.querySelectorAll('.card'));
+            if (cards.length === 0) return;
+
+            let focusIndex = 0;
+            cards[0].focus();
+
+            const updateFocus = (newIndex) => {
+                if (newIndex < 0) newIndex = cards.length - 1;
+                if (newIndex >= cards.length) newIndex = 0;
+                focusIndex = newIndex;
+                cards[focusIndex].focus();
+            };
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    updateFocus(focusIndex + 1);
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    updateFocus(focusIndex - 1);
+                }
+            });
+
+            cards.forEach((card, index) => {
+                card.addEventListener('mouseenter', () => {
+                    focusIndex = index;
+                    card.focus();
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
