@@ -72,9 +72,20 @@ function App() {
       // If multiple, grid.
       // Let's pick a size that allows a reasonable grid.
 
-      let bestSize = 200;
-      for (let s = 400; s >= 100; s -= 10) {
+      const startSize = Math.min(containerWidth, containerHeight, 1024);
+      const minSize = 100;
+
+      if (startSize < minSize) {
+        setImageSize(minSize);
+        return;
+      }
+
+      let bestSize = minSize;
+      for (let s = startSize; s >= minSize; s -= 10) {
         const cols = Math.floor(containerWidth / (s + 8));
+        // If cols is 0, we can't fit even one image in a row, continue shrinking
+        if (cols < 1) continue;
+
         const rows = Math.ceil(images.length / cols);
         if (rows * (s + 8) <= containerHeight) {
           bestSize = s;
