@@ -115,7 +115,7 @@ body {
 
 .main-area {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
     width: 100%;
     display: flex;
     flex-direction: column;
