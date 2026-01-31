@@ -73,11 +73,22 @@ function App() {
             const reservedSpace = 120;
             const containerHeight = window.innerHeight - reservedSpace;
 
-            for (let size = 200; size >= 80; size -= 10) {
+            const startSize = Math.min(containerWidth, containerHeight, 1024);
+            const minSize = 80;
+
+            if (startSize < minSize) {
+                setImageSize(minSize);
+                return;
+            }
+
+            for (let size = startSize; size >= minSize; size -= 10) {
                 const cols = Math.floor(containerWidth / (size + 8));
+                // If cols is 0, we can't fit even one image in a row, continue shrinking
+                if (cols < 1) continue;
+
                 const rows = Math.ceil(images.length / cols);
                 const totalHeight = rows * (size + 8);
-                if (totalHeight <= containerHeight && cols >= 1) {
+                if (totalHeight <= containerHeight) {
                     setImageSize(size);
                     break;
                 }
