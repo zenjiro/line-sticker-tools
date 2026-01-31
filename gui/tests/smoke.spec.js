@@ -11,7 +11,7 @@ test.describe('Smoke Tests', () => {
     test('Remove BG GUI should load', async ({ page }) => {
         await page.goto('remove-bg/');
         await expect(page).toHaveTitle('Remove Background GUI');
-        await expect(page.locator('h1').first()).toHaveText('Remove Background GUI');
+        await expect(page.locator('h1').first()).toHaveText('Remove BG GUI');
         await expect(page.getByText('Add Images').first()).toBeVisible();
     });
 

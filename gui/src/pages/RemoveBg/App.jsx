@@ -21,6 +21,7 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [gridColumns, setGridColumns] = useState(4);
 
     const fileInputRef = useRef(null);
     const containerRef = useRef(null);

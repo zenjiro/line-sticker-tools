@@ -36,6 +36,7 @@ function App() {
 
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [gridColumns, setGridColumns] = useState(4);
 
   const fileInputRef = useRef(null);
   const containerRef = useRef(null);

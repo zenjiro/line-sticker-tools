@@ -17,8 +17,8 @@ function App() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-
-  // Theme support removed (handled by ThemeContext)
+  const fileInputRef = useRef(null);
+  const containerRef = useRef(null);
 
   // Show message temporarily
   const showMessage = useCallback((msg) => {
