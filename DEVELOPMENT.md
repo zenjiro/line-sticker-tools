@@ -16,8 +16,8 @@ git clone <repository-url>
 cd line-sticker-tools
 uv sync
 
-# arrange-guiをローカルで開発する場合
-cd arrange-gui
+# GUIをローカルで開発する場合
+cd gui
 npm install
 ```
 
@@ -39,26 +39,28 @@ uv run pytest
 
 ---
 
-## GUI ツールの開発 (arrange-gui など)
+## GUI ツールの開発 (React + Vite)
 
 ### ローカルサーバーの起動
 
 ```bash
-cd arrange-gui  # または remove-bg-gui, divide-crop-gui
+cd gui
 npm run dev
 ```
 
-表示されるURL (例: `http://localhost:5173`) にブラウザでアクセスしてください。
+表示されるURL (例: `http://localhost:5173/line-sticker-tools/`) にブラウザでアクセスしてください。
 
 ### コードのチェック
 
 ```bash
+cd gui
 npm run lint
 ```
 
-### テストの実行
+### テストの実行 (Playwright)
 
 ```bash
+cd gui
 npx playwright install  # 初回のみ
 npx playwright test
 ```
@@ -66,6 +68,7 @@ npx playwright test
 ### ビルド
 
 ```bash
+cd gui
 npm run build
 ```
 
@@ -77,15 +80,12 @@ npm run build
 .
 ├── remove_bg.py             # 背景除去メインスクリプト
 ├── src/                     # Python画像処理のソースコード
-│   ├── image_analyzer.py    # 画像解析機能
-│   └── background_remover.py# 背景除去処理
 ├── tests/                   # Pythonテストスイート
-├── arrange-gui/             # スタンプ確認・管理用Webアプリ (旧 sticker-gui)
-│   ├── src/                 # React ソースコード
+├── gui/                     # 統合Webアプリ (React + Vite)
+│   ├── src/                 # React ソースコード (各ツールは pages/ 以下)
 │   ├── tests/               # Playwright テスト
-│   └── ...
-├── remove-bg-gui/           # 背景除去GUI
-├── divide-crop-gui/         # 分割・切り抜きGUI
+│   ├── public/              # 静的アセット
+│   └── vite.config.js       # MPA 構成
 ├── divide-crop-3x3.sh       # 画像分割スクリプト
 └── adjust-aspect-ratio.sh   # アスペクト比調整スクリプト
 ```

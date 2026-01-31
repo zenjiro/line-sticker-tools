@@ -1,16 +1,47 @@
-# React + Vite
+# LINE Sticker Tools - GUI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This directory contains the unified GUI tools for LINE Sticker processing, built with React and Vite.
 
-Currently, two official plugins are available:
+## Unified Architecture
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Previously, each tool was a separate project. They have now been consolidated into a single Multi-Page Application (MPA) for better maintainability and consistent design.
 
-## React Compiler
+- **Design System:** Shared components (Header, Layout) and CSS variables.
+- **I18n:** Centralized internationalization management.
+- **MPA Structure:** Uses Vite's rollup options to provide multiple entry points.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tools Included
 
-## Expanding the ESLint configuration
+1.  **Home:** The landing page with links to all tools.
+2.  **Remove BG GUI:** Background removal tool using fuzzy color matching.
+3.  **Divide & Crop GUI:** Tool for splitting images into 3x3 grids.
+4.  **Arrange GUI:** Simulation and management tool for sticker sets.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Development
+
+### Prerequisites
+- Node.js (v20 or later)
+- npm
+
+### Setup
+```bash
+npm install
+```
+
+### Running Locally
+```bash
+npm run dev
+```
+Navigate to `http://localhost:5173/line-sticker-tools/`.
+
+### Building for Production
+```bash
+npm run build
+```
+The output will be in the `dist/` directory.
+
+### Testing
+We use Playwright for smoke tests.
+```bash
+npx playwright test
+```

@@ -7,7 +7,7 @@ This document describes how to develop and run LINE Sticker Tools locally.
 - **Python 3.11 or higher**
 - **uv** (Python package manager)
 - **ImageMagick** (uses `convert` command)
-- **Node.js** (for developing sticker-gui locally)
+- **Node.js** (for developing the GUI locally)
 
 ## Installation
 
@@ -16,8 +16,8 @@ git clone <repository-url>
 cd line-sticker-tools
 uv sync
 
-# If developing sticker-gui locally
-cd sticker-gui
+# If developing the GUI locally
+cd gui
 npm install
 ```
 
@@ -39,26 +39,28 @@ uv run pytest
 
 ---
 
-## sticker-gui Development
+## GUI Development (React + Vite)
 
 ### Starting Local Server
 
 ```bash
-cd sticker-gui
+cd gui
 npm run dev
 ```
 
-Please access the displayed URL (e.g., `http://localhost:5173`) in your browser.
+Please access the URL (e.g., `http://localhost:5173/line-sticker-tools/`) in your browser.
 
 ### Linting
 
 ```bash
+cd gui
 npm run lint
 ```
 
-### Running Tests
+### Running Tests (Playwright)
 
 ```bash
+cd gui
 npx playwright install  # First time only
 npx playwright test
 ```
@@ -66,6 +68,7 @@ npx playwright test
 ### Build
 
 ```bash
+cd gui
 npm run build
 ```
 
@@ -77,13 +80,12 @@ npm run build
 .
 ├── remove_bg.py             # Main script for background removal
 ├── src/                     # Source code for Python image processing
-│   ├── image_analyzer.py    # Image analysis features
-│   └── background_remover.py# Background removal processing
 ├── tests/                   # Python test suite
-├── sticker-gui/             # Web app for sticker verification/management
-│   ├── src/                 # React source code
+├── gui/                     # Unified Web App (React + Vite)
+│   ├── src/                 # React source code (tools are under pages/)
 │   ├── tests/               # Playwright tests
-│   └── ...
+│   ├── public/              # Static assets
+│   └── vite.config.js       # MPA Configuration
 ├── divide-crop-3x3.sh       # Image division script
 └── adjust-aspect-ratio.sh   # Aspect ratio adjustment script
 ```

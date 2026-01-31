@@ -38,19 +38,19 @@ Proceed with one of the following methods depending on your application method.
 ./adjust-aspect-ratio.sh directory_name
 ```
 
-### 4. Applying via PC (sticker-gui)
+### 4. Applying via PC (LINE Sticker Tools GUI)
 
-A GUI tool for simulating and managing stickers in your browser. It is deployed to GitHub Pages for immediate use.
+An integrated set of GUI tools for background removal, image division, simulation, and management in your browser. It is deployed to GitHub Pages for immediate use.
 
-**🔗 [Open sticker-gui](https://zenjiro.github.io/line-sticker-tools/)**
+**🔗 [Open Web Tools](https://zenjiro.github.io/line-sticker-tools/)**
+(Access all tools from the home page)
 
 Key Features:
-- **Drag & Drop** to import images
-- **Keyboard Shortcuts** for quick organization
-- **Main/Tab Image** settings
-- **ZIP Export** to create files for application
+- **Remove BG**: Transparent processing in the browser
+- **Divide & Crop**: Execute 3x3 division while previewing
+- **Arrange**: Drag & drop organization, main/tab settings, and ZIP export
 
-For detailed usage, please refer to [sticker-gui/README-en.md](sticker-gui/README-en.md).
+For detailed usage, please refer to [gui/README.md](gui/README.md).
 
 ## Development
 
