@@ -61,10 +61,7 @@ jobs:
         run: |
           mkdir -p combined-dist
           # Top page
-          cp top-gui/index.html combined-dist/
-          if [ -f top-gui/style.css ]; then
-            cp top-gui/style.css combined-dist/
-          fi
+          cp -r top-gui/* combined-dist/
           
           # Arrange GUI
           mkdir -p combined-dist/arrange
