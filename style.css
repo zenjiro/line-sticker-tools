@@ -9,6 +9,8 @@
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --card-hover: #334155;
+    --border-active: #00d4ff;
+    --border-color: rgba(255, 255, 255, 0.1);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --bg-header: rgba(0, 0, 0, 0.4);
@@ -128,7 +130,7 @@ body {
 }
 
 header {
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
     animation: fadeInDown 0.8s ease-out;
 }
 
@@ -265,4 +267,35 @@ p.subtitle {
     .card-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Focus Styles */
+.card {
+    outline: none;
+}
+
+.card:focus,
+.card:active {
+    border-color: var(--border-active);
+    box-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
+    transform: translateY(-8px);
+}
+
+.card:focus::before {
+    opacity: 0.05;
+}
+
+/* Footer / Bottom Bar */
+footer {
+    width: 100%;
+    padding: 8px 16px;
+    background: var(--surface-dark);
+    border-top: 1px solid var(--border-color);
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.footer-content {
+    color: var(--border-active);
+    font-weight: 500;
 }
