@@ -65,7 +65,6 @@
 
 .card-info {
     padding: 6px;
-    background: rgba(0, 0, 0, 0.6);
     color: white;
     font-size: 11px;
     display: flex;
@@ -75,7 +74,6 @@
     bottom: 0;
     left: 0;
     right: 0;
-    backdrop-filter: blur(4px);
 }
 
 .file-name {

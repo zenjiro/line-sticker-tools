@@ -50,7 +50,6 @@ function ImageCard({
                 </div>
             </div>
             <div className="card-info">
-                <span className="file-name">{image.name}</span>
                 <span className="grid-info">
                     {t('divisions', { cols: image.cols, rows: image.rows })}
                 </span>
