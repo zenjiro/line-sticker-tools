@@ -198,10 +198,10 @@ function App() {
           <span className="image-count">
             {images.length}{t('imageCount')}
           </span>
-          <button onClick={toggleLanguage} className="icon-btn">
+          <button onClick={toggleLanguage} className="lang-toggle">
             {language === 'en' ? 'JA' : 'EN'}
           </button>
-          <button onClick={toggleTheme} className="icon-btn">
+          <button onClick={toggleTheme} title="テーマ切り替え">
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
         </div>
