@@ -25,6 +25,17 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'gui/package-lock.json'
 
+      - name: Determine Target Folder
+        id: target
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "folder=pr-preview/${{ github.event.number }}" >> $GITHUB_OUTPUT
+            echo "base_path=/line-sticker-tools/pr-preview/${{ github.event.number }}/" >> $GITHUB_OUTPUT
+          else
+            echo "folder=." >> $GITHUB_OUTPUT
+            echo "base_path=/line-sticker-tools/" >> $GITHUB_OUTPUT
+          fi
+
       - name: Install Dependencies
         run: npm ci
         working-directory: gui
@@ -33,16 +44,7 @@ jobs:
         run: npm run build
         working-directory: gui
         env:
-          VITE_BASE_PATH: /line-sticker-tools/${{ steps.target.outputs.folder }}/
-
-      - name: Determine Target Folder
-        id: target
-        run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "folder=pr-preview/${{ github.event.number }}" >> $GITHUB_OUTPUT
-          else
-            echo "folder=." >> $GITHUB_OUTPUT
-          fi
+          VITE_BASE_PATH: ${{ steps.target.outputs.base_path }}
 
       - name: Prepare Dist
         run: |
