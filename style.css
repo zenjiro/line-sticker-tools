@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
+    /* Default Dark Theme Variables */
     --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
     --surface-dark: #0f172a;
     --surface-card: #1e293b;
@@ -8,18 +10,114 @@
     --text-secondary: #94a3b8;
     --card-hover: #334155;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --bg-header: rgba(0, 0, 0, 0.4);
+    --header-border: rgba(255, 255, 255, 0.1);
+    --heading-gradient-start: #00d4ff;
+    --heading-gradient-end: #7c3aed;
+    --btn-gradient-start: #7c3aed;
+    --btn-gradient-end: #6366f1;
+    --btn-shadow: rgba(124, 58, 237, 0.4);
+}
+
+[data-theme="light"] {
+    --surface-dark: #f0f2f5;
+    --surface-card: #ffffff;
+    --text-primary: #1a1a2e;
+    --text-secondary: #64748b;
+    --card-hover: #e2e8f0;
+
+    --bg-header: rgba(255, 255, 255, 0.8);
+    --header-border: rgba(0, 0, 0, 0.1);
+    --heading-gradient-start: #0080ff;
+    --heading-gradient-end: #6020a0;
+    --btn-gradient-start: #6020a0;
+    --btn-gradient-end: #4f46e5;
+    --btn-shadow: rgba(99, 102, 241, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-    margin: 0;
     font-family: 'Outfit', sans-serif;
     background-color: var(--surface-dark);
     color: var(--text-primary);
-    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.app-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--header-border);
+    backdrop-filter: blur(8px);
+    transition: background 0.3s ease, border-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.app-header h1 {
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--heading-gradient-start), var(--heading-gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    padding: 0;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header-controls button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--btn-gradient-start), var(--btn-gradient-end));
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.header-controls button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--btn-shadow);
+}
+
+.main-area {
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
 .container {
@@ -34,7 +132,7 @@ header {
     animation: fadeInDown 0.8s ease-out;
 }
 
-h1 {
+.container header h1 {
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
@@ -42,6 +140,7 @@ h1 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.02em;
+    font-family: 'Outfit', sans-serif;
 }
 
 p.subtitle {
@@ -74,6 +173,11 @@ p.subtitle {
     overflow: hidden;
 }
 
+[data-theme="light"] .card {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
 .card::before {
     content: '';
     position: absolute;
@@ -91,6 +195,11 @@ p.subtitle {
     transform: translateY(-8px);
     box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .card:hover {
+    box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.1);
 }
 
 .card:hover::before {
@@ -149,7 +258,7 @@ p.subtitle {
 }
 
 @media (max-width: 768px) {
-    h1 {
+    .container header h1 {
         font-size: 2.5rem;
     }
 
