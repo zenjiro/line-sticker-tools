@@ -13,8 +13,9 @@ export const translations = {
         // Controls
         divisions: '分割数: 横{cols} x 縦{rows}',
 
+
         // StatusBar
-        shortcuts: '矢印:フォーカス / H/L:横分割 / J/K:縦分割 / E:ZIP保存',
+        shortcuts: '矢印:フォーカス / H/L:横分割 / J/K:縦分割 / E:エクスポート',
 
         // Language Toggle
         langEn: 'English',
