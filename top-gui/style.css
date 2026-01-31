@@ -36,42 +36,31 @@
     --btn-shadow: rgba(99, 102, 241, 0.3);
 }
 
-body {
+* {
+    box-sizing: border-box;
     margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
     font-family: 'Outfit', sans-serif;
     background-color: var(--surface-dark);
     color: var(--text-primary);
-    height: 100vh;
-    overflow: hidden;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app {
     display: flex;
     flex-direction: column;
+    width: 100%;
     height: 100%;
-}
-
-.main-area {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.app {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.main-area {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .app-header {
@@ -84,8 +73,7 @@ body {
     border-bottom: 1px solid var(--header-border);
     backdrop-filter: blur(8px);
     transition: background 0.3s ease, border-color 0.3s ease;
-    box-sizing: border-box;
-    /* Removed fixed positioning */
+    flex-shrink: 0;
 }
 
 .app-header h1 {
@@ -123,6 +111,15 @@ body {
     box-shadow: 0 4px 12px var(--btn-shadow);
 }
 
+.main-area {
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .container {
     max-width: 1200px;
     width: 90%;
@@ -135,9 +132,6 @@ header {
     animation: fadeInDown 0.8s ease-out;
 }
 
-/* Override h1 in main content to differ from nav bar if needed, 
-   but user asked to match top bar look. 
-   The main title in the body should likely remain large. */
 .container header h1 {
     font-size: 3.5rem;
     font-weight: 700;
@@ -146,7 +140,6 @@ header {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.02em;
-    /* Reset from app-header h1 */
     font-family: 'Outfit', sans-serif;
 }
 
