@@ -1,3 +1,8 @@
+import { useState, useCallback, useEffect, useRef } from 'react';
+import './App.css';
+import ImageCard from './components/ImageCard';
+import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
+import { exportZip } from './utils/exportZip';
 import StatusBar from './components/StatusBar';
 import { useLanguage } from './LanguageContext';
 
