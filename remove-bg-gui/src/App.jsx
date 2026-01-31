@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
 import ImageGrid from './components/ImageGrid';
 import StatusBar from './components/StatusBar';
+import ExpandedImageView from './components/ExpandedImageView';
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 import { processImage } from './utils/backgroundRemover';
 import { useLanguage } from './LanguageContext';
@@ -18,6 +19,7 @@ function App() {
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const fileInputRef = useRef(null);
     const containerRef = useRef(null);
@@ -208,6 +210,11 @@ function App() {
     const handleNavigate = useCallback((direction) => {
         if (images.length === 0) return;
 
+        // Deselect buttons to prevent conflicts
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+
         const maxIndex = images.length - 1;
         let newIndex = focusIndex;
 
@@ -325,12 +332,24 @@ function App() {
         setFocusIndex(index);
     }, []);
 
+    const handleExpand = useCallback(() => {
+        if (images.length > 0) {
+            setIsExpanded(true);
+        }
+    }, [images.length]);
+
+    const handleCollapse = useCallback(() => {
+        setIsExpanded(false);
+    }, []);
+
     // Set up keyboard navigation
     useKeyboardNavigation({
         onNavigate: handleNavigate,
         onFuzzIncrease: handleFuzzIncrease,
         onFuzzDecrease: handleFuzzDecrease,
         onExport: handleExport,
+        onExpand: handleExpand,
+        onCollapse: handleCollapse,
     });
 
     return (
@@ -387,6 +406,13 @@ function App() {
                     />
                 )}
             </main>
+
+            {isExpanded && images[focusIndex] && (
+                <ExpandedImageView
+                    image={images[focusIndex]}
+                    onClose={() => setIsExpanded(false)}
+                />
+            )}
 
             <StatusBar
                 message={isProcessing ? t('loading') : message}

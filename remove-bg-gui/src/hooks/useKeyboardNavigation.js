@@ -9,6 +9,8 @@ export function useKeyboardNavigation({
     onFuzzIncrease,
     onFuzzDecrease,
     onExport,
+    onExpand,
+    onCollapse,
 }) {
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -53,10 +55,18 @@ export function useKeyboardNavigation({
                     e.preventDefault();
                     onExport?.();
                     break;
+                case 'Enter':
+                    e.preventDefault();
+                    onExpand?.();
+                    break;
+                case 'Escape':
+                    e.preventDefault();
+                    onCollapse?.();
+                    break;
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [onNavigate, onFuzzIncrease, onFuzzDecrease, onExport]);
+    }, [onNavigate, onFuzzIncrease, onFuzzDecrease, onExport, onExpand, onCollapse]);
 }
