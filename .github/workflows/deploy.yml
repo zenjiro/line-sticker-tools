@@ -32,6 +32,8 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: gui
+        env:
+          VITE_BASE_PATH: /line-sticker-tools/${{ steps.target.outputs.folder }}/
 
       - name: Determine Target Folder
         id: target

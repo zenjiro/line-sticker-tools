@@ -5,7 +5,7 @@ import { resolve } from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/line-sticker-tools/',
+  base: process.env.VITE_BASE_PATH || '/line-sticker-tools/',
   build: {
     rollupOptions: {
       input: {
