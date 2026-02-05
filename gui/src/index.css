@@ -97,6 +97,8 @@ button {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  margin: 0;
+  padding: 0;
 }
 
 .header-controls {
