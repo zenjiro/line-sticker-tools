@@ -20,6 +20,9 @@
   --shadow-color: rgba(0, 0, 0, 0.4);
   --drop-zone-border: rgba(255, 255, 255, 0.15);
   --drop-zone-bg-hover: rgba(0, 212, 255, 0.05);
+  --heading-gradient-start: #00d4ff;
+  --heading-gradient-end: #7c3aed;
+
 
   /* Top GUI specific additions */
   --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
@@ -57,6 +60,8 @@
   --btn-gradient-start: #6020a0;
   --btn-gradient-end: #4f46e5;
   --btn-shadow: rgba(99, 102, 241, 0.3);
+  --heading-gradient-start: #0080ff;
+  --heading-gradient-end: #6020a0;
 
   color-scheme: light;
 }
