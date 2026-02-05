@@ -162,7 +162,7 @@ button {
 }
 
 .container header {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   animation: fadeInDown 0.8s ease-out;
 }
 
@@ -188,7 +188,7 @@ p.subtitle {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   width: 100%;
 }
@@ -197,7 +197,7 @@ p.subtitle {
   background: var(--surface-card);
   border-radius: 16px;
   padding: 1.5rem;
-  text-align: left;
+  text-align: center;
   text-decoration: none;
   color: var(--text-primary);
   transition: var(--transition);
@@ -209,7 +209,7 @@ p.subtitle {
   overflow: hidden;
   outline: none;
   width: 100%;
-  max-width: 320px;
+  max-width: 280px;
   margin: 0 auto;
 }
 

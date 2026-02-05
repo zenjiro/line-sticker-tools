@@ -47,7 +47,7 @@ export default function Home() {
 
     return (
         <Layout title="LINE Sticker Tools">
-            <div className="container" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className="container" style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: '80px' }}>
                 <header>
                     <h1>{t('title')}</h1>
                     <p className="subtitle">{t('subtitle')}</p>
@@ -83,7 +83,13 @@ export default function Home() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                backdropFilter: 'blur(8px)',
+                zIndex: 100
             }}>
                 <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                     {t('homeShortcuts')}
