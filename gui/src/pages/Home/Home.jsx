@@ -46,8 +46,15 @@ export default function Home() {
     }, [handleNavigate, handleSelect]);
 
     return (
-        <Layout title="LINE Sticker Tools">
-            <div className="container" style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: '80px' }}>
+        <Layout
+            title="LINE Sticker Tools"
+            footer={
+                <footer>
+                    <div className="footer-content">{t('homeShortcuts')}</div>
+                </footer>
+            }
+        >
+            <div className="container">
                 <header>
                     <h1>{t('title')}</h1>
                     <p className="subtitle">{t('subtitle')}</p>
@@ -72,27 +79,6 @@ export default function Home() {
                             </div>
                         </a>
                     ))}
-                </div>
-            </div>
-
-            <div className="home-bottom-bar" style={{
-                padding: '12px 24px',
-                background: 'var(--header-bg)',
-                borderTop: '1px solid var(--border-color)',
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                boxSizing: 'border-box',
-                position: 'fixed',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                backdropFilter: 'blur(8px)',
-                zIndex: 100
-            }}>
-                <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-                    {t('homeShortcuts')}
                 </div>
             </div>
         </Layout>

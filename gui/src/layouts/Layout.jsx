@@ -1,6 +1,6 @@
 import Header from '../components/Header';
 
-export default function Layout({ title, children, headerControls }) {
+export default function Layout({ title, children, headerControls, footer }) {
     return (
         <div className="app">
             <Header title={title}>
@@ -9,6 +9,7 @@ export default function Layout({ title, children, headerControls }) {
             <main className="main-area">
                 {children}
             </main>
+            {footer}
         </div>
     );
 }
