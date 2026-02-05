@@ -7,7 +7,7 @@
   font-weight: 400;
 
   /* Shared Variables (mostly from arrange-gui) */
-  --bg-primary: #0f0f1a;
+  --bg-primary: #1a1a1a;
   --bg-secondary: #1a1a2e;
   --bg-header: rgba(0, 0, 0, 0.4);
   --text-primary: #ffffff;
@@ -161,8 +161,8 @@ button {
   text-align: center;
 }
 
-header {
-  margin-bottom: 1rem;
+.container header {
+  margin-bottom: 2rem;
   animation: fadeInDown 0.8s ease-out;
 }
 
@@ -194,9 +194,10 @@ p.subtitle {
 }
 
 .card {
-  background-color: var(--surface-card);
-  border-radius: 1.5rem;
-  padding: 2.5rem;
+  background: var(--surface-card);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: left;
   text-decoration: none;
   color: var(--text-primary);
   transition: var(--transition);
@@ -207,6 +208,9 @@ p.subtitle {
   position: relative;
   overflow: hidden;
   outline: none;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
 }
 
 [data-theme="light"] .card {
@@ -243,13 +247,15 @@ p.subtitle {
 }
 
 .card:focus,
-.card:active {
+.card:active,
+.card.is-focused {
   border-color: var(--border-active);
   box-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
   transform: translateY(-8px);
 }
 
-.card:focus::before {
+.card:focus::before,
+.card.is-focused::before {
   opacity: 0.05;
 }
 

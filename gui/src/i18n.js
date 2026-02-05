@@ -13,6 +13,7 @@ export const translations = {
         langJa: '日本語',
         keyboardHelp: '矢印:移動 / J/N:ファジー増 / K/P:ファジー減 / E:エクスポート',
         shortcuts: '矢印:フォーカス / H/L:横分割 / J/K:縦分割 / E:エクスポート',
+        homeShortcuts: '←→:選択 / Enter/Space:決定',
 
         // Arrange GUI specific
         arrangeAppTitle: 'LINE Sticker Arranger',
@@ -20,7 +21,7 @@ export const translations = {
         addImages: '画像を追加',
         imageCount: '枚',
         valid: '(OK)',
-        anyOf: '{{counts}}枚のいずれか',
+        anyOf: '({{counts}}枚のいずれか)',
         invalid: '×',
         mainParams: 'メイン',
         tabParams: 'タブ',
@@ -47,6 +48,7 @@ export const translations = {
         langJa: '日本語',
         keyboardHelp: 'Arrows:Move / J/N:Fuzz+ / K/P:Fuzz- / E:Export',
         shortcuts: 'Arrows:Focus / H/L:Split H / J/K:Split V / E:Export',
+        homeShortcuts: '←→:Select / Enter/Space:Open',
 
         // Arrange GUI specific
         arrangeAppTitle: 'LINE Sticker Arranger',
@@ -54,7 +56,7 @@ export const translations = {
         addImages: 'Add Images',
         imageCount: ' images',
         valid: '(OK)',
-        anyOf: 'one of {{counts}}',
+        anyOf: '(one of {{counts}})',
         invalid: '×',
         mainParams: 'Main',
         tabParams: 'Tab',
