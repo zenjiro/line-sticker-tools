@@ -123,17 +123,7 @@ button {
   box-shadow: 0 4px 12px var(--btn-shadow);
 }
 
-.header-controls button.lang-toggle {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  box-shadow: none;
-}
 
-.header-controls button.lang-toggle:hover {
-  background: var(--bg-secondary);
-  border-color: var(--border-active);
-}
 
 .main-area {
   flex: 1;

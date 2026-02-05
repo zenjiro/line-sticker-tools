@@ -10,7 +10,7 @@ function StatusBar({ message, imageCount, hasMain, hasTab }) {
     return (
         <div className="status-bar">
             <div className="status-message">
-                {message || t('shortcuts')}
+                {message || t('shortcuts_arrange')}
             </div>
             <div className="status-info">
                 <span className={`status-item ${isValidCount ? 'valid' : 'invalid'}`}>
