@@ -77,7 +77,6 @@ button {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
 }
 
 .app-header {
@@ -138,7 +137,6 @@ button {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -167,12 +165,12 @@ button {
 .container {
   max-width: 1200px;
   width: 90%;
-  padding: 2rem;
+  padding: 1rem 2rem;
   text-align: center;
 }
 
 header {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   animation: fadeInDown 0.8s ease-out;
 }
 
@@ -322,4 +320,11 @@ p.subtitle {
   .card-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Tool pages content width */
+.main-area>div[class*="-app-content"] {
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
 }
