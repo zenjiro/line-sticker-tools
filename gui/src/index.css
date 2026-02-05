@@ -193,9 +193,10 @@ p.subtitle {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
   width: 100%;
+  justify-content: center;
 }
 
 .card {
@@ -214,7 +215,7 @@ p.subtitle {
   overflow: hidden;
   outline: none;
   width: 100%;
-  max-width: 260px;
+  max-width: 360px;
   margin: 0 auto;
 }
 
