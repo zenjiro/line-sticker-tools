@@ -30,6 +30,7 @@ function App() {
   // Display state
   const [imageSize, setImageSize] = useState(100);
   const [autoFitSize, setAutoFitSize] = useState(100);
+  const [isAutoZoomMode, setIsAutoZoomMode] = useState(true);
   const [activeArea, setActiveArea] = useState('main'); // 'main' | 'trash'
   const [trashFocusIndex, setTrashFocusIndex] = useState(0);
 
@@ -95,7 +96,7 @@ function App() {
 
   // Calculate auto-fit size when images load or trash visibility changes
   useEffect(() => {
-    if (images.length > 0 && containerRef.current) {
+    if (isAutoZoomMode && images.length > 0 && containerRef.current) {
       const containerWidth = containerRef.current.offsetWidth - 40;
       // Reserve space: 150 if no trash, 300 if trash logic
       // Actually Status bar height (40) + Header (60) + Padding (40) = ~140.
@@ -119,7 +120,7 @@ function App() {
         }
       }
     }
-  }, [images.length, trashImages.length]);
+  }, [images.length, trashImages.length, isAutoZoomMode]);
 
   // Show message temporarily
   const showMessage = useCallback((msg) => {
@@ -435,14 +436,17 @@ function App() {
   // Zoom controls
   const handleZoomIn = useCallback(() => {
     setImageSize(prev => Math.min(300, prev + 20));
+    setIsAutoZoomMode(false);
   }, []);
 
   const handleZoomOut = useCallback(() => {
     setImageSize(prev => Math.max(50, prev - 20));
+    setIsAutoZoomMode(false);
   }, []);
 
   const handleZoomReset = useCallback(() => {
     setImageSize(autoFitSize);
+    setIsAutoZoomMode(true);
   }, [autoFitSize]);
 
   // Export
@@ -580,6 +584,7 @@ function App() {
   return (
     <div
       className="app"
+      data-auto-zoom={isAutoZoomMode.toString()}
       ref={containerRef}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
