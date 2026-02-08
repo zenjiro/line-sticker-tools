@@ -30,6 +30,7 @@ function App() {
   // Display state
   const [imageSize, setImageSize] = useState(100);
   const [autoFitSize, setAutoFitSize] = useState(100);
+  const [autoZoomMode, setAutoZoomMode] = useState(true);
   const [activeArea, setActiveArea] = useState('main'); // 'main' | 'trash'
   const [trashFocusIndex, setTrashFocusIndex] = useState(0);
 
@@ -95,6 +96,7 @@ function App() {
 
   // Calculate auto-fit size when images load or trash visibility changes
   useEffect(() => {
+    if (!autoZoomMode) return;
     if (images.length > 0 && containerRef.current) {
       const containerWidth = containerRef.current.offsetWidth - 40;
       // Reserve space: 150 if no trash, 300 if trash logic
@@ -119,7 +121,7 @@ function App() {
         }
       }
     }
-  }, [images.length, trashImages.length]);
+  }, [images.length, trashImages.length, autoZoomMode]);
 
   // Show message temporarily
   const showMessage = useCallback((msg) => {
@@ -434,14 +436,17 @@ function App() {
 
   // Zoom controls
   const handleZoomIn = useCallback(() => {
+    setAutoZoomMode(false);
     setImageSize(prev => Math.min(300, prev + 20));
   }, []);
 
   const handleZoomOut = useCallback(() => {
+    setAutoZoomMode(false);
     setImageSize(prev => Math.max(50, prev - 20));
   }, []);
 
   const handleZoomReset = useCallback(() => {
+    setAutoZoomMode(true);
     setImageSize(autoFitSize);
   }, [autoFitSize]);
 
