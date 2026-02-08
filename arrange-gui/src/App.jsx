@@ -30,6 +30,7 @@ function App() {
   // Display state
   const [imageSize, setImageSize] = useState(100);
   const [autoFitSize, setAutoFitSize] = useState(100);
+  const [isAutoZoom, setIsAutoZoom] = useState(true);
   const [activeArea, setActiveArea] = useState('main'); // 'main' | 'trash'
   const [trashFocusIndex, setTrashFocusIndex] = useState(0);
 
@@ -113,13 +114,16 @@ function App() {
         const totalHeight = rows * (size + 8);
         if (totalHeight <= containerHeight && cols >= 1) {
           setAutoFitSize(size);
-          setImageSize(size);
+          // Only update imageSize if auto-zoom mode is enabled
+          if (isAutoZoom) {
+            setImageSize(size);
+          }
           // If we found a fit, break
           break;
         }
       }
     }
-  }, [images.length, trashImages.length]);
+  }, [images.length, trashImages.length, isAutoZoom]);
 
   // Show message temporarily
   const showMessage = useCallback((msg) => {
@@ -434,14 +438,17 @@ function App() {
 
   // Zoom controls
   const handleZoomIn = useCallback(() => {
+    setIsAutoZoom(false);
     setImageSize(prev => Math.min(300, prev + 20));
   }, []);
 
   const handleZoomOut = useCallback(() => {
+    setIsAutoZoom(false);
     setImageSize(prev => Math.max(50, prev - 20));
   }, []);
 
   const handleZoomReset = useCallback(() => {
+    setIsAutoZoom(true);
     setImageSize(autoFitSize);
   }, [autoFitSize]);
 
