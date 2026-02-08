@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import './App.css';
 import ImageGrid from './components/ImageGrid';
 import TrashArea from './components/TrashArea';
@@ -29,7 +29,7 @@ function App() {
 
   // Display state
   const [imageSize, setImageSize] = useState(100);
-  const [autoFitSize, setAutoFitSize] = useState(100);
+  const [isAutoZoom, setIsAutoZoom] = useState(true);
   const [activeArea, setActiveArea] = useState('main'); // 'main' | 'trash'
   const [trashFocusIndex, setTrashFocusIndex] = useState(0);
 
@@ -94,7 +94,7 @@ function App() {
   }, [focusIndex, activeArea]);
 
   // Calculate auto-fit size when images load or trash visibility changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (images.length > 0 && containerRef.current) {
       const containerWidth = containerRef.current.offsetWidth - 40;
       // Reserve space: 150 if no trash, 300 if trash logic
@@ -112,14 +112,16 @@ function App() {
         const rows = Math.ceil(totalImages / cols);
         const totalHeight = rows * (size + 8);
         if (totalHeight <= containerHeight && cols >= 1) {
-          setAutoFitSize(size);
-          setImageSize(size);
+          if (isAutoZoom) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setImageSize(size);
+          }
           // If we found a fit, break
           break;
         }
       }
     }
-  }, [images.length, trashImages.length]);
+  }, [images.length, trashImages.length, isAutoZoom]);
 
   // Show message temporarily
   const showMessage = useCallback((msg) => {
@@ -189,16 +191,6 @@ function App() {
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
   }, []);
-
-  // Check if selection is continuous
-  const isSelectionContinuous = useCallback(() => {
-    if (selectedIndices.size === 0) return false;
-    const sorted = Array.from(selectedIndices).sort((a, b) => a - b);
-    for (let i = 1; i < sorted.length; i++) {
-      if (sorted[i] - sorted[i - 1] !== 1) return false;
-    }
-    return true;
-  }, [selectedIndices]);
 
   // Move selected images
   // Implicit selection if nothing selected
@@ -338,7 +330,7 @@ function App() {
       // Esc to unselect
       setSelectedIndices(new Set());
     }
-  }, [cutIndices, selectedIndices, showMessage, t]);
+  }, [cutIndices, selectedIndices, showMessage, t, cutWasImplicit]);
 
   // Delete to trash
   const handleDelete = useCallback(() => {
@@ -414,7 +406,7 @@ function App() {
       }
       showMessage(t('restored'));
     }
-  }, [activeArea, focusIndex, trashFocusIndex, images, trashImages, showMessage, t]);
+  }, [activeArea, focusIndex, trashFocusIndex, images, trashImages, showMessage, t, selectedIndices]);
 
   // Set main image
   const handleSetMain = useCallback(() => {
@@ -434,16 +426,18 @@ function App() {
 
   // Zoom controls
   const handleZoomIn = useCallback(() => {
+    setIsAutoZoom(false);
     setImageSize(prev => Math.min(300, prev + 20));
   }, []);
 
   const handleZoomOut = useCallback(() => {
+    setIsAutoZoom(false);
     setImageSize(prev => Math.max(50, prev - 20));
   }, []);
 
   const handleZoomReset = useCallback(() => {
-    setImageSize(autoFitSize);
-  }, [autoFitSize]);
+    setIsAutoZoom(true);
+  }, []);
 
   // Export
   const handleExport = useCallback(async () => {
