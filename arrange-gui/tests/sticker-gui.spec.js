@@ -85,4 +85,41 @@ test.describe('Sticker GUI (English)', () => {
         await page.click('button.lang-toggle');
         await expect(page.getByRole('button', { name: 'Add Images' })).toBeVisible();
     });
+
+    test('should support auto-zoom mode', async ({ page }) => {
+        // Upload multiple images
+        const files = Array.from({ length: 8 }, (_, i) => ({
+            name: `sticker${i}.png`,
+            mimeType: 'image/png',
+            buffer: createDummyPng(),
+        }));
+        await page.locator('input[type="file"]').setInputFiles(files);
+        await expect(page.locator('.image-tile')).toHaveCount(9); // 8 images + 1 dummy
+
+        // Get initial image size (auto-zoom mode is enabled by default)
+        const initialSize = await page.locator('.image-tile').first().evaluate(el => el.offsetWidth);
+
+        // Manual zoom in (Ctrl++) - should disable auto-zoom mode
+        await page.keyboard.press('Control++');
+        const manualSize = await page.locator('.image-tile').first().evaluate(el => el.offsetWidth);
+        expect(manualSize).toBeGreaterThan(initialSize);
+
+        // Add more images - size should NOT change significantly (auto-zoom mode is disabled)
+        const moreFiles = Array.from({ length: 2 }, (_, i) => ({
+            name: `sticker${i + 8}.png`,
+            mimeType: 'image/png',
+            buffer: createDummyPng(),
+        }));
+        await page.locator('input[type="file"]').setInputFiles(moreFiles);
+        await expect(page.locator('.image-tile')).toHaveCount(11); // 10 images + 1 dummy
+        const sizeAfterAdd = await page.locator('.image-tile').first().evaluate(el => el.offsetWidth);
+        // Size should be close to manual size (within 10px tolerance for grid adjustments)
+        expect(Math.abs(sizeAfterAdd - manualSize)).toBeLessThan(10);
+
+        // Reset zoom (Ctrl+0) - should re-enable auto-zoom mode
+        await page.keyboard.press('Control+0');
+        const resetSize = await page.locator('.image-tile').first().evaluate(el => el.offsetWidth);
+        // After reset, size should be recalculated to fit all images
+        expect(resetSize).toBeLessThan(manualSize); // Should be smaller to fit more images
+    });
 });
