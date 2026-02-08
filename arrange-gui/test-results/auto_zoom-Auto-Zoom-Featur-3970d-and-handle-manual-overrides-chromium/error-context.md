@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "LINE Sticker Arranger" [level=1] [ref=e5]
+    - generic [ref=e6]:
+      - button "Add Images" [ref=e7] [cursor=pointer]
+      - generic [ref=e8]: 19 images
+      - button "JA" [ref=e9] [cursor=pointer]
+      - button "🌙" [ref=e10] [cursor=pointer]
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - img "sticker1.png" [ref=e14]
+      - img "sticker2.png" [ref=e16]
+      - img "sticker3.png" [ref=e18]
+      - img "sticker4.png" [ref=e20]
+      - img "sticker5.png" [ref=e22]
+      - img "sticker6.png" [ref=e24]
+      - img "sticker7.png" [ref=e26]
+      - img "sticker8.png" [ref=e28]
+      - img "sticker9.png" [ref=e30]
+      - img "sticker10.png" [ref=e32]
+      - img "sticker11.png" [ref=e34]
+      - img "sticker12.png" [ref=e36]
+      - img "sticker13.png" [ref=e38]
+      - img "sticker14.png" [ref=e40]
+      - img "sticker15.png" [ref=e42]
+      - img "sticker16.png" [ref=e44]
+      - img "sticker17.png" [ref=e46]
+      - img "sticker18.png" [ref=e48]
+      - img "sticker19.png" [ref=e50]
+      - generic [ref=e52]: 📍
+  - generic [ref=e53]:
+    - generic [ref=e54]:
+      - generic [ref=e55]: 🗑️
+      - generic [ref=e56]: Trash (1) - Delete/BackSpace to Restore
+    - img "sticker0.png" [ref=e59]
+  - generic [ref=e60]:
+    - generic [ref=e61]: Arrows:Move / Space:Select / Alt+Arrow:Reorder / Shift+Arrow:Range / M:Main / T:Tab / Del:Delete
+    - generic [ref=e62]:
+      - generic [ref=e63]: 19 images (Any of 8/16/24/32/40)
+      - generic [ref=e64]: Main ×
+      - generic [ref=e65]: Tab ×
+      - generic [ref=e66]: Cannot Export
+```

@@ -30,6 +30,7 @@ function App() {
   // Display state
   const [imageSize, setImageSize] = useState(100);
   const [autoFitSize, setAutoFitSize] = useState(100);
+  const [isAutoZoomMode, setIsAutoZoomMode] = useState(true);
   const [activeArea, setActiveArea] = useState('main'); // 'main' | 'trash'
   const [trashFocusIndex, setTrashFocusIndex] = useState(0);
 
@@ -107,19 +108,22 @@ function App() {
       const totalImages = images.length + 1; // +1 for dummy
 
       // Try different sizes to find one that fits all images
+      let bestFit = 50;
       for (let size = 200; size >= 50; size -= 10) {
         const cols = Math.floor(containerWidth / (size + 8));
         const rows = Math.ceil(totalImages / cols);
         const totalHeight = rows * (size + 8);
         if (totalHeight <= containerHeight && cols >= 1) {
-          setAutoFitSize(size);
-          setImageSize(size);
-          // If we found a fit, break
+          bestFit = size;
           break;
         }
       }
+      setAutoFitSize(bestFit);
+      if (isAutoZoomMode) {
+        setImageSize(bestFit);
+      }
     }
-  }, [images.length, trashImages.length]);
+  }, [images.length, trashImages.length, isAutoZoomMode]);
 
   // Show message temporarily
   const showMessage = useCallback((msg) => {
@@ -434,14 +438,27 @@ function App() {
 
   // Zoom controls
   const handleZoomIn = useCallback(() => {
+    setIsAutoZoomMode(false);
     setImageSize(prev => Math.min(300, prev + 20));
   }, []);
 
   const handleZoomOut = useCallback(() => {
+    setIsAutoZoomMode(false);
     setImageSize(prev => Math.max(50, prev - 20));
   }, []);
 
   const handleZoomReset = useCallback(() => {
+    setIsAutoZoomMode(true);
+    // The effect will handle sizing because isAutoZoomMode is a dependency
+    // But we might want to apply it immediately if effect doesn't fire (e.g. if already true? no, we set it to true)
+    // Actually, if it was ALREADY true, set state won't trigger re-render/effect?
+    // So we should also set image size here just in case.
+    // However, autoFitSize might be stale if we didn't resize listener?
+    // But per current logic, autoFitSize is calculated in effect derived from images.length.
+    // So it should be fine.
+    // Wait, if I'm in manual mode, autoFitSize is still what it was last calculated.
+    // So setting imageSize(autoFitSize) is correct.
+    // AND setting isAutoZoomMode(true).
     setImageSize(autoFitSize);
   }, [autoFitSize]);
 
