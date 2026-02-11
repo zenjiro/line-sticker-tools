@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import './App.css';
 import ImageGrid from './components/ImageGrid';
 import TrashArea from './components/TrashArea';
@@ -95,7 +95,7 @@ function App() {
   }, [focusIndex, activeArea]);
 
   // Calculate auto-fit size when images load or trash visibility changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isAutoZoomMode && images.length > 0 && containerRef.current) {
       const containerWidth = containerRef.current.offsetWidth - 40;
       // Reserve space: 150 if no trash, 300 if trash logic
@@ -114,6 +114,7 @@ function App() {
         const totalHeight = rows * (size + 8);
         if (totalHeight <= containerHeight && cols >= 1) {
           setAutoFitSize(size);
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setImageSize(size);
           // If we found a fit, break
           break;
