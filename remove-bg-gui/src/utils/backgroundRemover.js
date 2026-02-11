@@ -70,8 +70,58 @@ export function fuzzToThreshold(fuzz) {
 }
 
 /**
+ * Apply morphological erosion to the alpha channel.
+ * This removes edge artifacts by eroding the non-transparent regions.
+ * Similar to ImageMagick's -morphology Erode Disk:2
+ * @param {ImageData} imageData - Canvas ImageData object (will be modified)
+ * @param {number} radius - Erosion radius (default: 2 for Disk:2)
+ */
+function erodeAlphaChannel(imageData, radius = 2) {
+    const { data, width, height } = imageData;
+    const alphaCopy = new Uint8ClampedArray(width * height);
+
+    // Copy alpha channel
+    for (let i = 0; i < width * height; i++) {
+        alphaCopy[i] = data[i * 4 + 3];
+    }
+
+    // Apply erosion: if any pixel in the neighborhood is transparent,
+    // make the center pixel transparent
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const idx = y * width + x;
+            let shouldErode = false;
+
+            // Check circular neighborhood (disk structuring element)
+            for (let dy = -radius; dy <= radius && !shouldErode; dy++) {
+                for (let dx = -radius; dx <= radius && !shouldErode; dx++) {
+                    // Check if within disk radius
+                    if (dx * dx + dy * dy > radius * radius) continue;
+
+                    const ny = y + dy;
+                    const nx = x + dx;
+
+                    // Check bounds
+                    if (ny >= 0 && ny < height && nx >= 0 && nx < width) {
+                        const nIdx = ny * width + nx;
+                        if (alphaCopy[nIdx] === 0) {
+                            shouldErode = true;
+                        }
+                    }
+                }
+            }
+
+            if (shouldErode) {
+                data[idx * 4 + 3] = 0;
+            }
+        }
+    }
+}
+
+/**
  * Remove background from image by making all matching-color pixels transparent.
  * Similar to ImageMagick's -transparent flag behavior.
+ * Includes alpha channel erosion to remove edge artifacts.
  * @param {ImageData} imageData - Canvas ImageData object (will be modified)
  * @param {{r: number, g: number, b: number}} bgColor - Background color to remove
  * @param {number} fuzz - Fuzz tolerance percentage (0-100)
@@ -99,6 +149,10 @@ export function removeBackground(imageData, bgColor, fuzz) {
             }
         }
     }
+
+    // Apply morphological erosion to remove edge artifacts
+    // This matches ImageMagick's -morphology Erode Disk:2 behavior
+    erodeAlphaChannel(imageData, 2);
 
     return imageData;
 }
