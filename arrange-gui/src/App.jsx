@@ -496,15 +496,23 @@ function App() {
             newIndex = focusIndex - gridColumns;
           }
           break;
-        case 'down':
-          if (focusIndex + gridColumns <= maxIndex) {
-            newIndex = focusIndex + gridColumns;
-          } else if (trashImages.length > 0) {
-            setActiveArea('trash');
-            setTrashFocusIndex(0);
-            return;
+        case 'down': {
+          const targetIndex = focusIndex + gridColumns;
+          const lastRowStart = Math.floor(images.length / gridColumns) * gridColumns;
+
+          if (targetIndex <= maxIndex) {
+            newIndex = targetIndex;
+          } else if (focusIndex >= lastRowStart) {
+            if (trashImages.length > 0) {
+              setActiveArea('trash');
+              setTrashFocusIndex(0);
+              return;
+            }
+          } else {
+            newIndex = maxIndex;
           }
           break;
+        }
       }
 
       if (newIndex !== focusIndex) {
