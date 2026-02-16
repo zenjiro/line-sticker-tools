@@ -39,6 +39,7 @@ function App() {
 
   const fileInputRef = useRef(null);
   const containerRef = useRef(null);
+  const gridRef = useRef(null);
 
   // Calculate grid columns based on container width
   const [gridColumns, setGridColumns] = useState(8);
@@ -73,16 +74,27 @@ function App() {
 
   useEffect(() => {
     const updateColumns = () => {
-      if (containerRef.current) {
-        const containerWidth = containerRef.current.offsetWidth - 40; // padding
-        const cols = Math.floor(containerWidth / (imageSize + 8)); // gap
-        setGridColumns(Math.max(1, cols));
+      if (gridRef.current && images.length > 0) {
+        const tiles = gridRef.current.querySelectorAll('.image-tile:not(.dummy-tile)');
+        if (tiles.length >= 2) {
+          const firstTile = tiles[0];
+          const firstTop = firstTile.offsetTop;
+          let cols = 1;
+          for (let i = 1; i < tiles.length; i++) {
+            if (tiles[i].offsetTop === firstTop) {
+              cols++;
+            } else {
+              break;
+            }
+          }
+          setGridColumns(Math.max(1, cols));
+        }
       }
     };
     updateColumns();
     window.addEventListener('resize', updateColumns);
     return () => window.removeEventListener('resize', updateColumns);
-  }, [imageSize]);
+  }, [imageSize, images.length]);
 
   // Auto-scroll to focused item
   useEffect(() => {
@@ -639,6 +651,7 @@ function App() {
           </div>
         ) : (
           <ImageGrid
+            ref={gridRef}
             images={images}
             focusIndex={activeArea === 'main' ? focusIndex : -1}
             selectedIndices={selectedIndices}

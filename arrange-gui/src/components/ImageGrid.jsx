@@ -1,7 +1,8 @@
 import './ImageGrid.css';
 import ImageTile from './ImageTile';
+import { forwardRef } from 'react';
 
-function ImageGrid({
+const ImageGrid = forwardRef(({
     images,
     focusIndex,
     selectedIndices,
@@ -9,9 +10,10 @@ function ImageGrid({
     mainImageId,
     tabImageId,
     imageSize,
-}) {
+}, ref) => {
     return (
         <div
+            ref={ref}
             className="image-grid"
             style={{
                 '--image-size': `${imageSize}px`,
@@ -41,6 +43,8 @@ function ImageGrid({
             </div>
         </div>
     );
-}
+});
+
+ImageGrid.displayName = 'ImageGrid';
 
 export default ImageGrid;
