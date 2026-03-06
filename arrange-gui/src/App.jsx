@@ -94,6 +94,16 @@ function App() {
     }
   }, [focusIndex, activeArea]);
 
+  // Auto-scroll to focused item in trash
+  useEffect(() => {
+    if (activeArea === 'trash') {
+      const el = document.getElementById(`trash-tile-${trashFocusIndex}`);
+      if (el) {
+        el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
+    }
+  }, [trashFocusIndex, activeArea]);
+
   // Calculate auto-fit size when images load or trash visibility changes
   useEffect(() => {
     if (!autoZoomMode) return;
