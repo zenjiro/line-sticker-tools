@@ -122,4 +122,44 @@ test.describe('Sticker GUI (English)', () => {
         // After reset, size should be recalculated to fit all images
         expect(resetSize).toBeLessThan(manualSize); // Should be smaller to fit more images
     });
+
+    test('should navigate vertically matching actual grid columns (issue #33)', async ({ page }) => {
+        // Upload 20 images to test vertical navigation
+        const files = Array.from({ length: 20 }, (_, i) => ({
+            name: `sticker${i}.png`,
+            mimeType: 'image/png',
+            buffer: createDummyPng(),
+        }));
+        await page.locator('input[type="file"]').setInputFiles(files);
+        await expect(page.locator('.image-tile:not(.dummy-tile)')).toHaveCount(20);
+
+        // Click first tile to focus
+        await page.locator('.image-tile').first().click();
+        await expect(page.locator('.image-tile').first()).toHaveClass(/focused/);
+
+        // Get the actual number of columns by checking tile positions
+        const tiles = page.locator('.image-tile:not(.dummy-tile)');
+        const firstTop = await tiles.nth(0).evaluate(el => el.offsetTop);
+        let actualColumns = 1;
+        for (let i = 1; i < 20; i++) {
+            const top = await tiles.nth(i).evaluate(el => el.offsetTop);
+            if (top === firstTop) {
+                actualColumns++;
+            } else {
+                break;
+            }
+        }
+
+        // Press down arrow - should move by actualColumns positions
+        await page.keyboard.press('ArrowDown');
+        await expect(tiles.nth(actualColumns)).toHaveClass(/focused/);
+
+        // Press down again - should move by actualColumns positions again
+        await page.keyboard.press('ArrowDown');
+        await expect(tiles.nth(actualColumns * 2)).toHaveClass(/focused/);
+
+        // Press up - should move back by actualColumns positions
+        await page.keyboard.press('ArrowUp');
+        await expect(tiles.nth(actualColumns)).toHaveClass(/focused/);
+    });
 });
